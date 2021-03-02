@@ -22,6 +22,8 @@ You can also load details for a rider in a particular year using an additional a
 r = Rider(18655, 2020)
 ```
 
+The script provides documentation on how to use the `Rider` objects.
+
 ## How it Works
 The program uses `requests` and `bs4` to load data from firstcycling.com
 
