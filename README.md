@@ -17,15 +17,8 @@ Riders are loaded into a `Rider` object. To load data for a rider, use:
 r = Rider(18655)
 ```
 
-You can also load details for a rider in a particular year using an additional argument:
-```python
-r = Rider(18655, 2020)
-```
-
-The script provides documentation on how to use the `Rider` objects.
-
-## How it Works
-The program uses `requests` and `bs4` to load data from firstcycling.com
+The script automatically loads rider's biographical information and the details for each season in which they were active.
+The Python file provides documentation on how to use the `Rider` objects.
 
 ## Contributing
 If you would like to contribute to the code, please feel free to open a pull request. Feel free to open an issue to request features, identify bugs, or discuss the tool.
