@@ -28,7 +28,7 @@ class YearDetails:
     race_days : int
         Rider's number of race days in that season or None if not available
     race_kms : int
-        Distance covered by rider in races that season, in kilometers or None if not available
+        Distance covered by rider in races that season in kilometers or None if not available
     """
     
     def __init__(self, table):
@@ -37,21 +37,20 @@ class YearDetails:
         ----------
         table : bs4.element.Tag
             Table containing year information of rider
-            If table not on page, pass None and YearDetails will load with default values
         """
         
         if table:
             rider_year_details = [s.strip() for s in table.text.replace('\n', '|').split('|') if s.strip()]
-            rider_year_details = [x.split(': ') if ': ' in x else ['UCI Points', x.split()[0].replace('.', '')] for x in rider_year_details]
+            rider_year_details = [x.split(':') if ':' in x else ['UCI Points', x.split()[0].replace('.', '')] for x in rider_year_details]
             rider_year_details = dict(rider_year_details)
 
             self.team = rider_year_details['Team'].strip() if 'Team' in rider_year_details else None
             self.division = rider_year_details['Division'] if 'Division' in rider_year_details else None
             self.UCI_rank = int(rider_year_details['UCI Ranking']) if 'UCI Ranking' in rider_year_details else None
-            self.UCI_points = int(rider_year_details['UCI Points']) if 'UCI Points' in rider_year_details else None
-            self.UCI_wins = int(rider_year_details['UCI Wins']) if 'UCI Wins' in rider_year_details else None
-            self.race_days = int(rider_year_details['Race days']) if 'Race days' in rider_year_details else None
-            self.race_kms = int(rider_year_details['Distance'].split()[0].replace('.', '')) if 'Distance' in rider_year_details else None
+            self.UCI_points = int(rider_year_details['UCI Points']) if 'UCI Points' in rider_year_details and rider_year_details['UCI Points'].strip() else None
+            self.UCI_wins = int(rider_year_details['UCI Wins'].replace('-', '0')) if 'UCI Wins' in rider_year_details and rider_year_details['UCI Wins'].strip() else None
+            self.race_days = int(rider_year_details['Race days'].replace('-', '0')) if 'Race days'in rider_year_details and rider_year_details['Race days'].strip() else None
+            self.race_kms = int(rider_year_details['Distance'].split()[0].replace('.', '').replace('-', '0')) if 'Distance' in rider_year_details else None
         
         else:
             self.team = None
@@ -80,33 +79,30 @@ class Rider:
     date_of_birth : datetime.datetime
         Date of rider's birth
     height : float
-        Rider's height, in meters
+        Rider's height in meters or None if not available
     WT_detail : str
-        WorldTour detail provided for rider
+        WorldTour detail provided for rider or None if not available
     UCI_detail : str
-        UCI detail provided for rider
+        UCI detail provided for rider or None if not available
     UCI_rank : int
-        Rider's current UCI ranking
+        Rider's current UCI ranking or None if not available
     agency : str
-        Agency representing the rider
+        Agency representing the rider or None if not available
     strengths : list[str]
         List of the rider's strengths, as determined by FirstCycling
     year_details : dict[int, YearDetails]
         Dictionary mapping years to YearDetails object including rider's details for that year
     """
 
-    def __init__(self, rider_id, year=None):
+    def __init__(self, rider_id):
         """
         Parameters
         ----------
         rider_id : int
             FirstCycling.com id for the rider used in the url of their page
-        year : int, optional
-            Year for which to collect details.
-            If None, no yearly details collected (default is None).
         """
         
-        url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + ('&y=' + str(year)) if year else ''
+        url = 'https://firstcycling.com/rider.php?r=' + str(rider_id)
         page = requests.get(url)
         soup = bs4.BeautifulSoup(page.text, 'html.parser')
         
@@ -123,16 +119,39 @@ class Rider:
         # Load details from table into attributes
         self.nation = details['Nationality']
         self.date_of_birth = parse(details['Born'].rsplit(maxsplit=1)[0]) #datetime
-        self.height = float(details['Height'].rsplit(maxsplit=1)[0]) #in m
-        self.WT_detail = details['WorldTour']
-        self.UCI_detail = details['UCI']
-        self.UCI_rank = int(details['UCI Ranking'])
-        self.agency = details['Agency']
-        td = details_table.find_all('tr')[-1].find_all('td')[1]
-        self.strengths = [x.strip() for x in td if isinstance(x, bs4.element.NavigableString)]
+        self.height = float(details['Height'].rsplit(maxsplit=1)[0]) if 'Height' in details else None
+        self.WT_detail = details['WorldTour'] if 'WorldTour' in details else None
+        self.UCI_detail = details['UCI'] if 'UCI' in details else None
+        self.UCI_rank = int(details['UCI Ranking']) if 'UCI Ranking' in details else None
+        self.agency = details['Agency'] if 'Agency' in details else None
+
+        tr = details_table.find_all('tr')[-1]
+        if 'Strengths' in tr.find('td'):
+            td = tr.find_all('td')[1]
+            self.strengths = [x.strip() for x in td if isinstance(x, bs4.element.NavigableString)]
+        else:
+            self.strengths = []
         
-        # Load information for selected year
+        # Get list of years for which results are available
+        years = [o['value'] for o in soup.find('select').find_all('option')]
+        years = [int(y) for y in years if y]
+
+        # Load year-by-year details
         self.year_details = {}
-        if year:
-            rider_year_details_table = soup.find('table', {'class': 'tablesorter notOddeven'})
-            self.year_details[year] = YearDetails(rider_year_details_table)
+        for year in years:
+            self.add_year_details(year)
+
+
+    def add_year_details(self, year):
+        """ Add year-by-year details for rider.
+
+        Parameters
+        ----------
+        year : int
+            Year for which to collect details.
+        """
+        url = 'https://firstcycling.com/rider.php?r=' + str(self.id) + '&y=' + str(year)
+        page = requests.get(url)
+        soup = bs4.BeautifulSoup(page.text, 'html.parser')
+        rider_year_details_table = soup.find('table', {'class': 'tablesorter notOddeven'})
+        self.year_details[year] = YearDetails(rider_year_details_table)
