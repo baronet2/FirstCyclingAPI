@@ -16,19 +16,19 @@ class YearDetails:
     Attributes
     ----------
     team : str
-        Team of rider in specific year
+        Team of rider in specific year or None if no team
     division : str
-        Team's division in that season
+        Team's division in that season or None if not available
     UCI_rank : int
-        Rider's UCI ranking in that season
+        Rider's UCI ranking in that season or None if not available
     UCI_points : int
-        Rider's UCI points accumulated in that season
+        Rider's UCI points accumulated in that season or None if not available
     UCI_rank : int
-        Rider's number of UCI wins in that season
+        Rider's number of UCI wins in that season or None if not available
     race_days : int
-        Rider's number of race days in that season
+        Rider's number of race days in that season or None if not available
     race_kms : int
-        Distance covered by rider in races that season, in kilometers
+        Distance covered by rider in races that season, in kilometers or None if not available
     """
     
     def __init__(self, table):
@@ -37,16 +37,31 @@ class YearDetails:
         ----------
         table : bs4.element.Tag
             Table containing year information of rider
+            If table not on page, pass None and YearDetails will load with default values
         """
         
-        rider_year_details = [s.strip() for s in table.text.replace('\n', '|').split('|') if s.strip()]
-        self.team = rider_year_details[0].split(maxsplit=1)[-1]
-        self.division = rider_year_details[1].split(maxsplit=1)[-1]
-        self.UCI_rank = int(rider_year_details[2].rsplit(maxsplit=1)[-1])
-        self.UCI_points = int(rider_year_details[3].split(maxsplit=1)[0].replace('.', ''))
-        self.UCI_wins = int(rider_year_details[4].rsplit(maxsplit=1)[-1])
-        self.race_days = int(rider_year_details[5].rsplit(maxsplit=1)[-1])
-        self.race_kms = int(rider_year_details[6].rsplit(maxsplit=2)[-2].replace('.', ''))
+        if table:
+            rider_year_details = [s.strip() for s in table.text.replace('\n', '|').split('|') if s.strip()]
+            rider_year_details = [x.split(': ') if ': ' in x else ['UCI Points', x.split()[0].replace('.', '')] for x in rider_year_details]
+            rider_year_details = dict(rider_year_details)
+
+            self.team = rider_year_details['Team'].strip() if 'Team' in rider_year_details else None
+            self.division = rider_year_details['Division'] if 'Division' in rider_year_details else None
+            self.UCI_rank = int(rider_year_details['UCI Ranking']) if 'UCI Ranking' in rider_year_details else None
+            self.UCI_points = int(rider_year_details['UCI Points']) if 'UCI Points' in rider_year_details else None
+            self.UCI_wins = int(rider_year_details['UCI Wins']) if 'UCI Wins' in rider_year_details else None
+            self.race_days = int(rider_year_details['Race days']) if 'Race days' in rider_year_details else None
+            self.race_kms = int(rider_year_details['Distance'].split()[0].replace('.', '')) if 'Distance' in rider_year_details else None
+        
+        else:
+            self.team = None
+            self.division = None
+            self.UCI_rank = None
+            self.UCI_points = None
+            self.UCI_wins = None
+            self.race_days = None
+            self.race_kms = None
+
         
 class Rider:
     """
