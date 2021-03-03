@@ -60,7 +60,13 @@ class YearDetails:
             self.UCI_wins = None
             self.race_days = None
             self.race_kms = None
+    
+    def __str__(self):
+        return str(vars(self))
 
+    def __repr__(self):
+        return str(vars(self))
+     
         
 class Rider:
     """
@@ -155,3 +161,9 @@ class Rider:
         soup = bs4.BeautifulSoup(page.text, 'html.parser')
         rider_year_details_table = soup.find('table', {'class': 'tablesorter notOddeven'})
         self.year_details[year] = YearDetails(rider_year_details_table)
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return (self.id, self.name)
