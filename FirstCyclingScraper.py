@@ -46,8 +46,8 @@ def parse_row(row):
 
     pos = int(pos.text) if pos.text.isnumeric() else pos.text
     gc = int(gc.text) if gc.text else None
-    race = Race(icon, race, date, cat.text)
-    uci = (float(uci.text) if uci.text != '-' else 0) if uci else 0
+    race = Race(icon, race, cat.text.strip(), date)
+    uci = (float(uci.text) if uci.text != '-' else 0) if uci else None
     return date, pos, gc, race, uci
 
 
@@ -75,7 +75,7 @@ class YearDetails:
         DataFrame with the following columns:
         Date : datetime.datetime
             Date of result
-        Position : int or str
+        Result : int or str
             Rider's result in race, e.g. 5 or 'DNF'
         GC Standing : int
             Rider's GC standings after stage, or None if not applicable
@@ -119,9 +119,9 @@ class YearDetails:
 
         if results_table:
             result_rows = results_table.find_all('tr')[1:]
-            self.results_df = pd.DataFrame([parse_row(row) for row in result_rows], columns = ['Date', 'Position', 'GC Standing', 'Race', 'UCI Points'])
+            self.results_df = pd.DataFrame([parse_row(row) for row in result_rows], columns = ['Date', 'Result', 'GC Standing', 'Race', 'UCI Points'])
         else:
-            self.results_df = pd.DataFrame(columns = ['Date', 'Position', 'GC Standing', 'Race', 'UCI_Points'])
+            self.results_df = pd.DataFrame(columns = ['Date', 'Result', 'GC Standing', 'Race', 'UCI_Points'])
     
     def __str__(self):
         return str(vars(self))
@@ -240,6 +240,7 @@ class Rider:
         race_details_df = pd.concat([pd.Series(vars(race)) for race in df['Race']], axis=1).transpose()
         race_details_df.columns = [' '.join([w[0].capitalize() + w[1:] for w in c.replace('_', ' ').split()]) for c in race_details_df.columns]
         df = pd.concat([df, race_details_df], axis=1)
+        df = df.loc[:,~df.columns.duplicated()] # Remove second 'Date' column
         return df
 
     def __str__(self):
@@ -265,6 +266,8 @@ class Race:
         Date of race result
     cat : str
         The race category/division
+    championship : bool
+        Whether the race is a national, continental, or world championships event
     country : str
         Three-letter code for country in which race held or 'UCI' or 'OL' (Olympics) for races which change countries
     edition_country : str
@@ -326,6 +329,8 @@ class Race:
         """
 
         # Initialize variables
+        self.cat = cat
+        self.championship = cat in ('CN', 'CCRR', 'CCTT', 'WCRR', 'WCTT')
         self.classification = None
         self.stage_num = None
         self.jersey_colour = None
