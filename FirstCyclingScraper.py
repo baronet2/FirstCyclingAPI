@@ -7,7 +7,50 @@ This file provides tools used to collect data from FirstCycling.com.
 import requests
 import bs4
 import pandas as pd
-from dateutil.parser import parse
+from dateutil.parser import parse, ParserError
+
+
+def parse_row(row):
+    """ Parse one row from rider's race results table
+
+    Parameters
+    ----------
+    row : bs4.element.Tag
+        tr from race results table
+
+    Returns
+    -------
+    date : datetime.datetime
+        Date of race
+    pos : int or str
+        Rider's result in race, e.g. 5 or 'DNF'
+    gc : int
+        Rider's GC standing at end of stage or None if not applicable
+    race : Race
+        Object representing race
+    uci : float
+        UCI points earned by rider in race
+    """
+    tds = row.find_all('td')
+    if len(tds) == 7:
+        tds.append(None)
+    date, date_alt, pos, gc, icon, race, cat, uci = tuple(tds)
+    try:
+        date = parse(date.text)
+    except ParserError:
+        year, month, day = date.text.split('-')
+        month = '01' if not int(month) else month
+        day = '01' if not int(day) else day
+        fixed_date = year + '-' + month + '-' + day
+        print(date.text, fixed_date)
+        date = parse(fixed_date)
+
+    pos = int(pos.text) if pos.text.isnumeric() else pos.text
+    gc = int(gc.text) if gc.text else None
+    race = Race(icon, race, date, cat.text)
+    uci = (float(uci.text) if uci.text != '-' else 0) if uci else 0
+    return date, pos, gc, race, uci
+
 
 class YearDetails:
     """
@@ -29,18 +72,32 @@ class YearDetails:
         Rider's number of race days in that season or None if not available
     race_kms : int
         Distance covered by rider in races that season in kilometers or None if not available
+    results_df : pd.DataFrame
+        DataFrame with the following columns:
+        Date : datetime.datetime
+            Date of result
+        Position : int or str
+            Rider's result in race, e.g. 5 or 'DNF'
+        GC Standing : int
+            Rider's GC standings after stage, or None if not applicable
+        Race : Race
+            Race object including details on race
+        UCI Points : float
+            Number of UCI points earned by rider in race
     """
     
-    def __init__(self, table):
+    def __init__(self, details_table, results_table):
         """
         Parameters
         ----------
-        table : bs4.element.Tag
+        details_table : bs4.element.Tag
             Table containing year information of rider
+        results_table : bs4.element.Tag
+            Table containing race results of rider in year
         """
-        
-        if table:
-            rider_year_details = [s.strip() for s in table.text.replace('\n', '|').split('|') if s.strip()]
+                
+        if details_table:
+            rider_year_details = [s.strip() for s in details_table.text.replace('\n', '|').split('|') if s.strip()]
             rider_year_details = [x.split(':') if ':' in x else ['UCI Points', x.split()[0].replace('.', '')] for x in rider_year_details]
             rider_year_details = dict(rider_year_details)
 
@@ -60,6 +117,12 @@ class YearDetails:
             self.UCI_wins = None
             self.race_days = None
             self.race_kms = None
+
+        if results_table:
+            result_rows = results_table.find_all('tr')[1:]
+            self.results_df = pd.DataFrame([parse_row(row) for row in result_rows], columns = ['Date', 'Position', 'GC Standing', 'Race', 'UCI Points'])
+        else:
+            self.results_df = pd.DataFrame(columns = ['Date', 'Position', 'GC Standing', 'Race', 'UCI_Points'])
     
     def __str__(self):
         return str(vars(self))
@@ -160,10 +223,151 @@ class Rider:
         page = requests.get(url)
         soup = bs4.BeautifulSoup(page.text, 'html.parser')
         rider_year_details_table = soup.find('table', {'class': 'tablesorter notOddeven'})
-        self.year_details[year] = YearDetails(rider_year_details_table)
+        rider_results_table = soup.find('table', {'class': 'sortTabell tablesorter'})
+        self.year_details[year] = YearDetails(rider_year_details_table, rider_results_table)
 
     def __str__(self):
         return self.name
 
     def __repr__(self):
-        return (self.id, self.name)
+        return str((self.id, self.name))
+
+
+class Race:
+    """
+    Framework to store one race day / classification information
+
+    Attributes
+    ----------
+    id : int
+        FirstCycling.com id for the race used in URLs
+    name : str
+        Race name, e.g. 'Tour de France'
+    full_name : str
+        Full Race name as it appears in the race results table, e.g. 'Tour de France | 17th stage'
+    date : datetime.datetime
+        Date of race result
+    cat : str
+        The race category/division
+    country : str
+        Three-letter code for country in which race held or 'UCI' or 'OL' (Olympics) for races which change countries
+    edition_country : str
+        Three-letter code for country in which race edition held
+        May be different from self.country for races which change countries
+    edition_name : str
+        Details about this edition of a race which changes countries, e.g. host city for World Championships, or None if not available
+    classification : str
+        The classification type ('General', 'Points', 'Mountain', or 'Youth') or None if not applicable
+    jersey_colour :  str
+        The colour of the jersey for the race's classification, if available
+    stage_num : int
+        The stage number or 0 for a prologue None if not applicable
+    one_day : bool
+        Whether race is a one-day race
+    ITT : bool
+        Whether the race is an inidividual time trial
+    TTT : bool
+        Whether the race is a team time trial
+    TT : bool
+        Whether the race is a time trial
+    MTF : bool
+        Whether the race has a mountain-top finish
+    mountain : bool
+        Whether the race is on mountainous terrain, or is a mountain individual time trial
+    hilly : bool
+        Whether the race is on hilly terrain
+    flat : bool
+        Whether the race is on flat terrain, or is a non-mountain individual time trial
+    cobbled : bool
+        Whether the race is a cobbled race
+    icon : str
+        The filename for the icon which appears before the race country flag, for debugging purposes
+    """
+
+    colours = ('green', 'red', 'yellow', 'pink', 'violet', 'blue', 'black', 'orange', 'lightblue', 'white') # TODO Any more?
+    icon_map = {'Bakketempo.png': 'Mountain ITT',
+                'Fjell-MF.png': 'Mountain MTF',
+                'Fjell.png': 'Mountain',
+                'Flatt.png': 'Flat',
+                'Smaakupert-MF.png': 'Hilly MTF',
+                'Smaakupert.png': 'Hilly',
+                'Tempo.png': 'Flat ITT',
+                'Brosten.png': 'Cobbles',
+                'Lagtempo.png': 'TTT'} # TODO Any more?
+
+    def __init__(self, icon, race, cat, date):
+        """
+        Parameters
+        ----------
+        icon : bs4.element.Tag
+            td from race results table which includes the icon before the race country flag
+        race : bs4.element.Tag
+            td from race results table which includes the race name
+        cat : str
+            Race category/division, e.g. '2.WT3' or '1.1'
+        date : datetime.datetime
+            Date of race
+        """
+
+        # Initialize variables
+        self.classification = False
+        self.stage_num = None
+        self.jersey_colour = None
+        self.TTT = False
+        self.ITT = False
+        self.TT = False
+        self.MTF = False
+        self.mountain = False
+        self.hilly = False
+        self.flat = False
+        self.cobbled = False
+        
+        # Parse icon for details on race type and profile using colours and icon_map static variables  
+        icon = icon.img['src'].split('/')[-1] if icon.img else None
+        self.icon = icon
+        if icon:
+            for col in Race.colours:
+                if (col + '.') in icon:
+                    self.classification = True
+                    self.jersey_colour = col.capitalize()
+                    icon = col.capitalize()
+                    break
+            icon = Race.icon_map[icon] if icon in Race.icon_map else icon
+       
+            self.TTT = icon == 'TTT'
+            self.ITT = 'ITT' in icon
+            self.TT = self.ITT or self.TTT
+            self.MTF = icon.endswith(' MTF')
+            self.mountain = 'Mountain' in icon
+            self.hilly = 'Hilly' in icon
+            self.flat = 'Flat' in icon
+            self.cobbled = 'Cobbles' in icon
+        
+        # Basic race details
+        self.name = race.a.text
+        self.id = int(race.a['href'].split('?r=')[1].split('&')[0])
+        self.full_name = race.text.strip().replace('\n', ' ').replace('\t', '').replace('\r', '')
+        
+        # Country flags for race
+        imgs = race.find_all('img')
+        self.country = imgs[0]['src'].split('/')[-1][:-4]
+        self.edition_country = self.country
+        self.edition_name = None
+        
+        # Additional information in full race name
+        tokens = self.full_name.split(' | ')
+        if len(imgs) > 1:
+            self.edition_country = imgs[1]['src'][-7:-4]
+            self.edition_name = tokens[1]
+        if self.classification or (len(tokens)>1 and self.icon == '-'):
+            # TODO we miss general classification for icon '-' since format same as one-day race with '-' such as CycloCross
+            self.classification = 'General' if len(tokens) == 1 else tokens[1]
+        elif len(tokens) > 1:
+            self.stage_num = 0 if tokens[1] == 'Prologue' else ''.join([c for c in tokens[1] if c.isnumeric()])
+        self.one_day = not (self.classification or self.stage_num)
+
+    def __str__(self):
+        return self.full_name
+    
+    def __repr__(self):
+        return 'Race(' + self.full_name + ')'

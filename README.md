@@ -17,7 +17,7 @@ Riders are loaded into a `Rider` object. To load data for a rider, use:
 r = Rider(18655)
 ```
 
-The script automatically loads rider's biographical information and the details for each season in which they were active.
+The script automatically loads rider's biographical information and the details and results for each season in which they were active.
 The Python file provides documentation on how to use the `Rider` objects.
 
 ## Contributing
