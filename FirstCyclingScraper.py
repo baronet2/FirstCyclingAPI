@@ -160,6 +160,11 @@ class Rider:
         List of the rider's strengths, as determined by FirstCycling
     year_details : dict[int, YearDetails]
         Dictionary mapping years to YearDetails object including rider's details for that year
+
+    Methods
+    -------
+    get_full_results_dataframe()
+        Loads pd.DataFrame() of all rider's race results
     """
 
     def __init__(self, rider_id):
@@ -207,10 +212,10 @@ class Rider:
         # Load year-by-year details
         self.year_details = {}
         for year in years:
-            self.add_year_details(year)
+            self.__add_year_details(year)
 
 
-    def add_year_details(self, year):
+    def __add_year_details(self, year):
         """ Add year-by-year details for rider.
 
         Parameters
