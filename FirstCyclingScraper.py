@@ -42,7 +42,6 @@ def parse_row(row):
         month = '01' if not int(month) else month
         day = '01' if not int(day) else day
         fixed_date = year + '-' + month + '-' + day
-        print(date.text, fixed_date)
         date = parse(fixed_date)
 
     pos = int(pos.text) if pos.text.isnumeric() else pos.text
@@ -310,7 +309,7 @@ class Race:
         """
 
         # Initialize variables
-        self.classification = False
+        self.classification = None
         self.stage_num = None
         self.jersey_colour = None
         self.TTT = False
@@ -323,7 +322,7 @@ class Race:
         self.cobbled = False
         
         # Parse icon for details on race type and profile using colours and icon_map static variables  
-        icon = icon.img['src'].split('/')[-1] if icon.img else None
+        icon = icon.img['src'].split('/')[-1] if icon.img else icon.text
         self.icon = icon
         if icon:
             for col in Race.colours:
@@ -358,12 +357,19 @@ class Race:
         tokens = self.full_name.split(' | ')
         if len(imgs) > 1:
             self.edition_country = imgs[1]['src'][-7:-4]
-            self.edition_name = tokens[1]
-        if self.classification or (len(tokens)>1 and self.icon == '-'):
-            # TODO we miss general classification for icon '-' since format same as one-day race with '-' such as CycloCross
+            self.edition_name = tokens[1].strip()
+        if self.classification:
+            # TODO we miss general classification with missing jerseys
             self.classification = 'General' if len(tokens) == 1 else tokens[1]
+        elif ' | Mountain' in self.full_name:
+            self.classification = 'Mountain'
+        elif ' | Points' in self.full_name:
+            self.classification = 'Points'
+        elif ' | Youth' in self.full_name:
+            self.classification = 'Youth'
         elif len(tokens) > 1:
-            self.stage_num = 0 if tokens[1] == 'Prologue' else ''.join([c for c in tokens[1] if c.isnumeric()])
+            self.stage_num = '0' if tokens[1] == 'Prologue' else ''.join([c for c in tokens[1] if c.isnumeric()])
+            self.stage_num = None if not self.stage_num.strip() else int(self.stage_num)
         self.one_day = not (self.classification or self.stage_num)
 
     def __str__(self):
