@@ -225,6 +225,18 @@ class Rider:
         rider_results_table = soup.find('table', {'class': 'sortTabell tablesorter'})
         self.year_details[year] = YearDetails(rider_year_details_table, rider_results_table)
 
+    def get_full_results_dataframe(self):
+        """ Return pd.DataFrame() of all rider's race results """
+        teams = {k: v.team for k, v in self.year_details.items()}
+        df = pd.concat([v.results_df for v in self.year_details.values()]).reset_index(drop=True)
+        df['Year'] = df['Date'].apply(lambda x: x.year)
+        df['Team'] = df['Year'].apply(lambda x: teams[x])
+        df['Race Name'] = df['Year'].astype(str) + ' ' + df['Race'].apply(lambda x: x.name)
+        race_details_df = pd.concat([pd.Series(vars(race)) for race in df['Race']], axis=1).transpose()
+        race_details_df.columns = [' '.join([w[0].capitalize() + w[1:] for w in c.replace('_', ' ').split()]) for c in race_details_df.columns]
+        df = pd.concat([df, race_details_df], axis=1)
+        return df
+
     def __str__(self):
         return self.name
 
