@@ -19,6 +19,11 @@ r = Rider(18655)
 
 The script automatically loads rider's biographical information and the details and results for each season in which they were active.
 The Python file provides documentation on how to use the `Rider` objects.
+For instance, if you'd like to load a `pandas.DataFrame` of all the rider's results, you can use:
+
+```python
+df = r.get_full_results_dataframe()
+```
 
 ## Contributing
 If you would like to contribute to the code, please feel free to open a pull request. Feel free to open an issue to request features, identify bugs, or discuss the tool.
