@@ -10,47 +10,6 @@ import pandas as pd
 from dateutil.parser import parse, ParserError
 
 
-def parse_row(row):
-    """ Parse one row from rider's race results table
-
-    Parameters
-    ----------
-    row : bs4.element.Tag
-        tr from race results table
-
-    Returns
-    -------
-    date : datetime.datetime
-        Date of race
-    pos : int or str
-        Rider's result in race, e.g. 5 or 'DNF'
-    gc : int
-        Rider's GC standing at end of stage or None if not applicable
-    race : Race
-        Object representing race
-    uci : float
-        UCI points earned by rider in race
-    """
-    tds = row.find_all('td')
-    if len(tds) == 7:
-        tds.append(None)
-    date, date_alt, pos, gc, icon, race, cat, uci = tuple(tds)
-    try:
-        date = parse(date.text)
-    except ParserError:
-        year, month, day = date.text.split('-')
-        month = '01' if not int(month) else month
-        day = '01' if not int(day) else day
-        fixed_date = year + '-' + month + '-' + day
-        date = parse(fixed_date)
-
-    pos = int(pos.text) if pos.text.isnumeric() else pos.text
-    gc = int(gc.text) if gc.text else None
-    race = Race(icon, race, cat.text.strip(), date)
-    uci = (float(uci.text) if uci.text != '-' else 0) if uci else None
-    return date, pos, gc, race, uci
-
-
 class YearDetails:
     """
     Framework to store information about a particular rider.
@@ -94,7 +53,47 @@ class YearDetails:
         results_table : bs4.element.Tag
             Table containing race results of rider in year
         """
-                
+        
+        def parse_row(row):
+            """ Parse one row from rider's race results table
+
+            Parameters
+            ----------
+            row : bs4.element.Tag
+                tr from race results table
+
+            Returns
+            -------
+            date : datetime.datetime
+                Date of race
+            pos : int or str
+                Rider's result in race, e.g. 5 or 'DNF'
+            gc : int
+                Rider's GC standing at end of stage or None if not applicable
+            race : Race
+                Object representing race
+            uci : float
+                UCI points earned by rider in race
+            """
+            tds = row.find_all('td')
+            if len(tds) == 7:
+                tds.append(None)
+            date, date_alt, pos, gc, icon, race, cat, uci = tuple(tds)
+            try:
+                date = parse(date.text)
+            except ParserError:
+                year, month, day = date.text.split('-')
+                month = '01' if not int(month) else month
+                day = '01' if not int(day) else day
+                fixed_date = year + '-' + month + '-' + day
+                date = parse(fixed_date)
+
+            pos = int(pos.text) if pos.text.isnumeric() else pos.text
+            gc = int(gc.text) if gc.text else None
+            race = Race(icon, race, cat.text.strip(), date)
+            uci = (float(uci.text) if uci.text != '-' else 0) if uci else None
+            return date, pos, gc, race, uci   
+            
         if details_table:
             rider_year_details = [s.strip() for s in details_table.text.replace('\n', '|').split('|') if s.strip()]
             rider_year_details = [x.split(':') if ':' in x else ['UCI Points', x.split()[0].replace('.', '')] for x in rider_year_details]
