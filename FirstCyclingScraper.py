@@ -73,7 +73,7 @@ class YearDetails:
             race : Race
                 Object representing race
             uci : float
-                UCI points earned by rider in race
+                UCI points earned by rider in race, available since 2018 only
             """
             tds = row.find_all('td')
             if len(tds) == 7:
