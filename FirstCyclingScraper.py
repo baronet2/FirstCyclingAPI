@@ -166,15 +166,19 @@ class Rider:
         Loads pd.DataFrame() of all rider's race results
     """
 
-    def __init__(self, rider_id):
+    def __init__(self, rider_id, years=None):
         """
         Parameters
         ----------
         rider_id : int
             FirstCycling.com id for the rider used in the url of their page
+        years : list[int]
+            List of years for which to collect data, default is None
+            If None, collect all years for which rider results are available
         """
         
-        url = 'https://firstcycling.com/rider.php?r=' + str(rider_id)
+        url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + (('&y=' + str(years[0])) if years else '')
+
         page = requests.get(url)
         soup = bs4.BeautifulSoup(page.text, 'html.parser')
         
@@ -197,6 +201,7 @@ class Rider:
         self.UCI_rank = int(details['UCI Ranking']) if 'UCI Ranking' in details else None
         self.agency = details['Agency'] if 'Agency' in details else None
 
+        # Load rider's strengths from details table
         tr = details_table.find_all('tr')[-1]
         if 'Strengths' in tr.find('td'):
             td = tr.find_all('td')[1]
@@ -204,17 +209,30 @@ class Rider:
         else:
             self.strengths = []
         
-        # Get list of years for which results are available
-        years = [o['value'] for o in soup.find('select').find_all('option')]
-        years = [int(y) for y in years if y]
-
-        # Load year-by-year details
+        # Add yearly details
         self.year_details = {}
-        for year in years:
-            self.__add_year_details(year)
+        if not years: # Get list of all years for which results available
+            years = [o['value'] for o in soup.find('select').find_all('option')]
+            years = [int(y) for y in years if y]
+        self.year_details[years[0]] = self.__year_details_from_soup(soup) # Add year from current page
+        for year in years[1:]:
+            self.add_year_details(year) # Add other requested years
 
 
-    def __add_year_details(self, year):
+    def __year_details_from_soup(self, soup):
+        """ Return year details for rider from soup.
+
+        Parameters
+        ----------
+        soup : bs4.BeautifulSoup
+            BeautifulSoup for page
+        """
+        rider_year_details_table = soup.find('table', {'class': 'tablesorter notOddeven'})
+        rider_results_table = soup.find('table', {'class': 'sortTabell tablesorter'})
+        return YearDetails(rider_year_details_table, rider_results_table)
+
+    
+    def add_year_details(self, year):
         """ Add year-by-year details for rider.
 
         Parameters
@@ -225,10 +243,9 @@ class Rider:
         url = 'https://firstcycling.com/rider.php?r=' + str(self.id) + '&y=' + str(year)
         page = requests.get(url)
         soup = bs4.BeautifulSoup(page.text, 'html.parser')
-        rider_year_details_table = soup.find('table', {'class': 'tablesorter notOddeven'})
-        rider_results_table = soup.find('table', {'class': 'sortTabell tablesorter'})
-        self.year_details[year] = YearDetails(rider_year_details_table, rider_results_table)
+        self.year_details[year] = self.__year_details_from_soup(soup)
 
+    
     def get_full_results_dataframe(self):
         """ Return pd.DataFrame() of all rider's race results """
         teams = {k: v.team for k, v in self.year_details.items()}
@@ -275,7 +292,7 @@ class Race:
     edition_name : str
         Details about this edition of a race which changes countries, e.g. host city for World Championships, or None if not available
     classification : str
-        The classification type ('General', 'Points', 'Mountain', or 'Youth') or None if not applicable
+        The classification type ('General', 'Points', 'Mountain', 'Sprint', or 'Youth') or None if not applicable
     jersey_colour :  str
         The colour of the jersey for the race's classification, if available
     stage_num : int
@@ -388,6 +405,8 @@ class Race:
             self.classification = 'Points'
         elif ' | Youth' in self.full_name:
             self.classification = 'Youth'
+        elif ' | Sprint' in self.full_name:
+            self.classification = 'Sprint'
         elif len(tokens) > 1:
             self.stage_num = '0' if tokens[1] == 'Prologue' else ''.join([c for c in tokens[1] if c.isnumeric()])
             self.stage_num = None if not self.stage_num.strip() else int(self.stage_num)
