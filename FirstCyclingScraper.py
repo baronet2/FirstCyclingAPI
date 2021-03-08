@@ -410,7 +410,7 @@ class Race:
         elif len(tokens) > 1:
             self.stage_num = '0' if tokens[1] == 'Prologue' else ''.join([c for c in tokens[1] if c.isnumeric()])
             self.stage_num = None if not self.stage_num.strip() else int(self.stage_num)
-        self.one_day = not (self.classification or self.stage_num)
+        self.one_day = self.classification is None and self.stage_num is None
 
     def __str__(self):
         return self.full_name
