@@ -268,7 +268,7 @@ class Rider:
 
 class Race:
     """
-    Framework to store one race day / classification information
+    Framework to store stage / one race day / classification information
 
     Attributes
     ----------
