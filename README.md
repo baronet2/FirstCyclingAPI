@@ -25,5 +25,10 @@ To only load data for specific years, pass a list of years to the `years` attrib
 r.get_json()
 ```
 
+A `pandas.DataFrame` with a rider's results can be obtained by calling:
+```python
+r.get_results_dataframe()
+```
+
 ## Contributing
 If you would like to contribute to the code, please feel free to open a pull request. Feel free to open an issue to request features, identify bugs, or discuss the tool.

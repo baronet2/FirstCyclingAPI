@@ -19,7 +19,12 @@ class Rider:
     year_details : dict(int : RiderYearDetails)
         Dictionary mapping years to rider's details for that year
     results : dict(int : ResultsTable)
-        Dictionary mapping years to rider's results for that year   
+        Dictionary mapping years to rider's results for that year
+
+    Methods
+    -------
+    get_results_dataframe()
+    get_json()
     """
 
     def __init__(self, rider_id, years=None):
@@ -46,6 +51,10 @@ class Rider:
             self.results[year] = ResultsTable(self.id, year)
 
         # TODO Reuse soup across functions - provide alternative __init__ from soup
+
+    def get_results_dataframe(self):
+        """ Return pd.DataFrame of all loaded result for rider, sorted in reverse chronological order """
+        return pd.concat([result.to_dataframe() for result in self.results.values()]).sort_values('date', ascending=False)
 
     def __str__(self):
         return self.details.name

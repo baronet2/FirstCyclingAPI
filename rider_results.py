@@ -21,7 +21,6 @@ class ResultsTable:
     Methods
     -------
     to_dataframe()
-        TODO
     """
     def __init__(self, rider_id, year):
         """
@@ -43,7 +42,11 @@ class ResultsTable:
 
         # Get table of results
         results_table = soup.find('table', {'class': 'sortTabell tablesorter'})
-        self.results = [RaceResult(row) for row in results_table.tbody.find_all('tr')] if results_table else []           
+        self.results = [RaceResult(row) for row in results_table.tbody.find_all('tr')] if results_table else []
+
+    def to_dataframe(self):
+        """ Return pd.DataFrame of results table """
+        return pd.concat([pd.Series(vars(result)) for result in self.results], axis=1).transpose()
 
     def __str__(self):
         return 'ResultsTable(' + self.name + ', ' + str(self.year) + ')'
