@@ -2,12 +2,35 @@
 author: Ethan Baron
 """
 
+# Import packages ----
+
 import requests
 import bs4
 import pandas as pd
 from dateutil.parser import parse
 import json
 
+
+# Global constants ----
+
+colour_icons = ('green', 'red', 'yellow', 'pink', 'violet', 'blue', 'black', 'orange', 'lightblue', 'white') # TODO Any more?
+
+profile_icon_map = {'Bakketempo.png': 'Mountain ITT',
+            'Fjell-MF.png': 'Mountain MTF',
+            'Fjell.png': 'Mountain',
+            'Flatt.png': 'Flat',
+            'Smaakupert-MF.png': 'Hilly MTF',
+            'Smaakupert.png': 'Hilly',
+            'Tempo.png': 'Flat ITT',
+            'Brosten.png': 'Cobbles',
+            'Lagtempo.png': 'TTT'} # TODO Any more?
+
+uci_categories = ['2.2', '2.1', '2.HC', '2.WT1', '2.WT2', '2.WT3', '2.Pro', 'GT1', 'GT2', '1.2', '1.1', '1.HC', '1.WT1', '1.WT2', '1.WT3', '1.Pro']
+championships_categories = ['CN', 'CCRR', 'CCTT', 'CCU', 'CCUT', 'WCRR', 'WCTT', 'WCU', 'WCUT']
+U23_categories = ['1.2U', '2.2U', '1.NC', '2.NC']
+
+
+# Useful functions ----
 
 def ComplexHandler(obj):
     """
