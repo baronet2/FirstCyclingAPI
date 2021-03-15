@@ -39,18 +39,21 @@ class RiderDetails:
         List of years for which rider results are available
     """
 
-    def __init__(self, rider_id):
+    def __init__(self, rider_id, soup=None, return_soup=False):
         """
         Parameters
         ----------
         rider_id : int
             FirstCycling.com id for the rider used in the url of their page
+        soup : bs4.BeautifulSoup
+            BeautifulSoup of page
         """
         
         # Load rider page
-        url = 'https://firstcycling.com/rider.php?r=' + str(rider_id)
-        page = requests.get(url)
-        soup = bs4.BeautifulSoup(page.text, 'html.parser')
+        if not soup:
+            url = 'https://firstcycling.com/rider.php?r=' + str(rider_id)
+            page = requests.get(url)
+            soup = bs4.BeautifulSoup(page.text, 'html.parser')
 
         # Add basic rider information
         self.id = rider_id
@@ -128,7 +131,7 @@ class RiderYearDetails:
         Distance covered by rider in races that season, in kilometers, or 0 if not available
     """
     
-    def __init__(self, rider_id, year):
+    def __init__(self, rider_id, year, soup=None):
         """
         Parameters
         ----------
@@ -136,15 +139,19 @@ class RiderYearDetails:
             FirstCycling.com id for the rider used in the url of their page
         year : int
             Year for which to collect details
+        soup : bs4.BeautifulSoup
+            BeautifulSoup of page
         """
-        self.rider_id = rider_id
-        self.year = year
 
         # Load rider page
-        url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + '&y=' + str(year)
-        page = requests.get(url)
-        soup = bs4.BeautifulSoup(page.text, 'html.parser')
-        self.name = soup.h1.text     
+        if not soup:
+            url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + '&y=' + str(year)
+            page = requests.get(url)
+            soup = bs4.BeautifulSoup(page.text, 'html.parser')
+
+        self.rider_id = rider_id
+        self.year = year
+        self.name = soup.h1.text
 
         # Parse table with details
         details_table = soup.find('table', {'class': 'tablesorter notOddeven'})

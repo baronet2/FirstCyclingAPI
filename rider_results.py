@@ -22,7 +22,7 @@ class ResultsTable:
     -------
     to_dataframe()
     """
-    def __init__(self, rider_id, year):
+    def __init__(self, rider_id, year, soup=None):
         """
         Parameters
         ----------
@@ -30,14 +30,18 @@ class ResultsTable:
             FirstCycling.com id for the rider used in the url of their page
         year : int
             Year for which to collect details
+        soup : bs4.BeautifulSoup
+            BeautifulSoup of page
         """
+        
+        # Load rider page
+        if not soup:
+            url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + '&y=' + str(year)
+            page = requests.get(url)
+            soup = bs4.BeautifulSoup(page.text, 'html.parser')
+        
         self.rider_id = rider_id
         self.year = year
-
-        # Load rider page
-        url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + '&y=' + str(year)
-        page = requests.get(url)
-        soup = bs4.BeautifulSoup(page.text, 'html.parser')
         self.name = soup.h1.text
 
         # Get table of results

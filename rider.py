@@ -37,20 +37,34 @@ class Rider:
             List of years for which to collect data, default is None
             If None, collect all years for which rider results are available
         """
+        # Load rider page
+        url = 'https://firstcycling.com/rider.php?r=' + str(rider_id)
+        page = requests.get(url)
+        soup = bs4.BeautifulSoup(page.text, 'html.parser')
+
         # Add basic details
         self.id = rider_id
-        self.details = RiderDetails(rider_id)
+        self.details = RiderDetails(rider_id, soup=soup)
 
         # Add yearly details and results
         self.year_details = {}
         self.results = {}
         if not years: # Get list of all years for which results available
             years = self.details.years_active
-        for year in years:
-            self.year_details[year] = RiderYearDetails(self.id, year)
-            self.results[year] = ResultsTable(self.id, year)
 
-        # TODO Reuse soup across functions - provide alternative __init__ from soup
+        # Load details and results from most recent year directly from soup (avoids repeating requests)
+        year = years[0]
+        self.year_details[year] = RiderYearDetails(self.id, year, soup=soup)
+        self.results[year] = ResultsTable(self.id, year, soup=soup)
+        
+        for year in years[1:]: # Load details and results for other years (avoids repeating requests)
+            # Load webpage
+            url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + '&y=' + str(year)
+            page = requests.get(url)
+            soup = bs4.BeautifulSoup(page.text, 'html.parser')            
+            self.year_details[year] = RiderYearDetails(self.id, year, soup=soup)
+            self.results[year] = ResultsTable(self.id, year, soup=soup)
+
 
     def get_results_dataframe(self):
         """ Return pd.DataFrame of all loaded result for rider, sorted in reverse chronological order """
