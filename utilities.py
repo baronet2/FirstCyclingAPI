@@ -42,11 +42,15 @@ def ComplexHandler(obj):
     else:
         raise TypeError('Object of type %s with value of %s is not JSON serializable' % (type(Obj), repr(Obj)))
 
+def rider_link_to_id(a):
+    return int(a['href'].split('r=')[1])
+
+def team_link_to_id(a):
+    return int(a['href'].split('l=')[1])
 
 def img_to_country_code(img):
     """ Obtain three-letter country code, or 'UCI' or 'OL' from html img tag """
     return img['src'].split('/')[-1].split('.')[0]
-
 
 def race_link_to_race_id(a):
     """ Obtain race id from html a tag containing link to race page """
