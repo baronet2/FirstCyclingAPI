@@ -60,3 +60,9 @@ def race_link_to_race_id(a):
 def race_link_to_stage_num(a):
     """ Obtain stage number from html a tag containing link to race stage page """
     return int(a['href'].split('e=')[1])
+
+
+# TODO More Functions
+
+def parse_rider_td(td):
+    

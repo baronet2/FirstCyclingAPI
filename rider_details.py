@@ -150,7 +150,7 @@ class RiderYearDetails:
             soup = bs4.BeautifulSoup(page.text, 'html.parser')
 
         self.rider_id = rider_id
-        self.year = year
+        self.year = int(soup.find_all('h1')[1].text)
         self.name = soup.h1.text
 
         # Parse table with details

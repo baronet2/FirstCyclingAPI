@@ -4,6 +4,7 @@ author: Ethan Baron
 
 from rider_details import *
 from rider_results import *
+from utilities import *
 
 
 class Rider:
