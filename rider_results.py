@@ -41,16 +41,18 @@ class ResultsTable:
             soup = bs4.BeautifulSoup(page.text, 'html.parser')
         
         self.rider_id = rider_id
-        self.year = year
+        self.year = int(soup.find_all('h1')[1].text)
         self.name = soup.h1.text
 
         # Get table of results
         results_table = soup.find('table', {'class': 'sortTabell tablesorter'})
         self.results = [RaceResult(row) for row in results_table.tbody.find_all('tr')] if results_table else []
+        self.results = [x for x in self.results if vars(x)]
 
     def to_dataframe(self):
-        """ Return pd.DataFrame of results table """
-        return pd.concat([pd.Series(vars(result)) for result in self.results], axis=1).transpose()
+        """ Return pd.DataFrame of results table with attributes of RaceResults as column """
+        empty_df = pd.DataFrame(columns = ['date', 'result', 'gc_standing', 'icon', 'cat', 'uci_points', 'race_id', 'race_country_code', 'full_name', 'name'])
+        return pd.concat([pd.Series(vars(result)) for result in self.results], axis=1).transpose() if self.results else empty_df
 
     def __str__(self):
         return 'ResultsTable(' + self.name + ', ' + str(self.year) + ')'
@@ -115,7 +117,9 @@ class RaceResult:
 
         # Get tds from tr
         tds = row.find_all('td')
-        if len(tds) == 7: # Missing UCI points column - prior to 2018
+        if len(tds) < 7: # No data
+            return
+        elif len(tds) == 7: # Missing UCI points column - prior to 2018
             tds.append(None)
         date, date_alt, result, gc_standing, icon, race_td, cat, uci = tuple(tds)
         

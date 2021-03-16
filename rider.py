@@ -38,7 +38,7 @@ class Rider:
             If None, collect all years for which rider results are available
         """
         # Load rider page
-        url = 'https://firstcycling.com/rider.php?r=' + str(rider_id)
+        url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + ('&y=' + str(years[0])) if years else ''
         page = requests.get(url)
         soup = bs4.BeautifulSoup(page.text, 'html.parser')
 
@@ -51,14 +51,14 @@ class Rider:
         self.results = {}
         if not years: # Get list of all years for which results available
             years = self.details.years_active
+        year_showing = int(soup.find_all('h1')[1].text)
+        years = [year for year in years if year != year_showing]
 
         # Load details and results from most recent year directly from soup (avoids repeating requests)
-        year = years[0]
-        self.year_details[year] = RiderYearDetails(self.id, year, soup=soup)
-        self.results[year] = ResultsTable(self.id, year, soup=soup)
+        self.year_details[year_showing] = RiderYearDetails(self.id, year_showing, soup=soup)
+        self.results[year_showing] = ResultsTable(self.id, year_showing, soup=soup)
         
-        for year in years[1:]: # Load details and results for other years (avoids repeating requests)
-            # Load webpage
+        for year in years: # Load details and results for other years (avoids repeating requests)
             url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + '&y=' + str(year)
             page = requests.get(url)
             soup = bs4.BeautifulSoup(page.text, 'html.parser')            
