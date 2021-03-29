@@ -32,3 +32,6 @@ r.get_results_dataframe()
 
 ## Contributing
 If you would like to contribute to the code, please feel free to open a pull request. Feel free to open an issue to request features, identify bugs, or discuss the tool.
+
+## License
+See the file called LICENSE. Note that this project is not affiliated in any way with firstcycling.com.
