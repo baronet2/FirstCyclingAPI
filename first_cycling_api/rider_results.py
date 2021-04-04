@@ -53,7 +53,7 @@ class ResultsTable:
         """
         Return pd.DataFrame of results table with attributes of RaceResults as column.
         
-        Arguments
+        Parameters
         ----------
         expand : bool
             Whether to include additional derived columns, such as boolean columns indicating what type of race each result is for
@@ -182,7 +182,7 @@ class RaceResult:
         """
         Return pd.Series representing race result.
 
-        Arguments
+        Parameters
         ----------
         expand : bool
             If True, include derived features such as booleans indicating race type and profile

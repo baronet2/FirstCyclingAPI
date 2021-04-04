@@ -21,11 +21,6 @@ class Rider:
         Dictionary mapping years to rider's details for that year
     results : dict(int : ResultsTable)
         Dictionary mapping years to rider's results for that year
-
-    Methods
-    -------
-    get_results_dataframe()
-    get_json()
     """
 
     def __init__(self, rider_id, years=None):
