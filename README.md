@@ -1,6 +1,6 @@
 # First Cycling API
 
-This repository provides a tool to obtain data from firstcycling.com.
+An unofficial API to obtain data from https://firstcycling.com/.
 
 ## Usage
 
