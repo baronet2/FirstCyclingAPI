@@ -2,7 +2,7 @@
 author: Ethan Baron
 """
 
-from utilities import *
+from .utilities import *
 
 
 class RiderDetails:

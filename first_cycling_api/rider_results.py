@@ -2,7 +2,7 @@
 author: Ethan Baron
 """
 
-from utilities import *
+from .utilities import *
 
 
 class ResultsTable:
@@ -49,10 +49,16 @@ class ResultsTable:
         self.results = [RaceResult(row) for row in results_table.tbody.find_all('tr')] if results_table else []
         self.results = [x for x in self.results if vars(x)]
 
-    def to_dataframe(self):
-        """ Return pd.DataFrame of results table with attributes of RaceResults as column """
-        empty_df = pd.DataFrame(columns = ['date', 'result', 'gc_standing', 'icon', 'cat', 'uci_points', 'race_id', 'race_country_code', 'full_name', 'name'])
-        return pd.concat([pd.Series(vars(result)) for result in self.results], axis=1).transpose() if self.results else empty_df
+    def to_dataframe(self, expand=False):
+        """
+        Return pd.DataFrame of results table with attributes of RaceResults as column.
+        
+        Arguments
+        ----------
+        expand : bool
+            Whether to include additional derived columns, such as boolean columns indicating what type of race each result is for
+        """
+        return pd.concat([result.to_series(expand=expand) for result in self.results], axis=1).transpose() if self.results else None
 
     def __str__(self):
         return 'ResultsTable(' + self.name + ', ' + str(self.year) + ')'
@@ -171,3 +177,48 @@ class RaceResult:
         d = vars(self).copy()
         d['date'] = str(d['date'])
         return d
+
+    def to_series(self, expand=False):
+        """
+        Return pd.Series representing race result.
+
+        Arguments
+        ----------
+        expand : bool
+            If True, include derived features such as booleans indicating race type and profile
+        """
+        series = pd.Series(vars(self))
+
+        if expand:
+            # Race type/category booleans
+            series['uci_race'] = self.cat in uci_categories
+            series['championship'] = self.cat in championships_categories
+            series['u23'] = self.cat in U23_categories
+            series['cx'] = self.name.startswith('CX -')
+            series['juniors'] = self.cat.startswith('J')
+            series['one_day'] = self.cat in one_day_categories
+
+            # Parse icon for details on race type and profile using colours and icon_map static variables
+            series['jersey_colour'] = None
+            series['profile'] = None
+            
+            if self.icon:
+                for col in colour_icons:
+                    if (col + '.') in self.icon:
+                        series['jersey_colour'] = col.capitalize()
+                        break
+                
+                if not series['jersey_colour']:
+                    if self.icon in profile_icon_map:
+                        series['profile'] = profile_icon_map[self.icon]
+       
+            series['ttt'] = series['profile'] == 'TTT'
+            series['itt'] = 'ITT' in series['profile'] if series['profile'] else None
+            series['tt'] = series['itt'] or series['ttt']
+            series['mtf'] = series['profile'].endswith(' MTF') if series['profile'] else None
+            series['mountain'] = 'Mountain' in series['profile'] if series['profile'] else None
+            series['hilly'] = 'Hilly' in series['profile'] if series['profile'] else None
+            series['flat'] = 'Flat' in series['profile'] if series['profile'] else None
+            series['cobbled'] = 'Cobbles' in series['profile'] if series['profile'] else None
+        
+        return series

@@ -2,9 +2,9 @@
 author: Ethan Baron
 """
 
-from rider_details import *
-from rider_results import *
-from utilities import *
+from .rider_details import *
+from .rider_results import *
+from .utilities import *
 
 
 class Rider:
@@ -67,9 +67,9 @@ class Rider:
             self.results[year] = ResultsTable(self.id, year, soup=soup)
 
 
-    def get_results_dataframe(self):
+    def get_results_dataframe(self, expand=False):
         """ Return pd.DataFrame of all loaded result for rider, sorted in reverse chronological order """
-        return pd.concat([result.to_dataframe() for result in self.results.values()]).sort_values('date', ascending=False)
+        return pd.concat([result.to_dataframe(expand=expand) for result in self.results.values()]).sort_values('date', ascending=False)
 
     def __str__(self):
         return self.details.name

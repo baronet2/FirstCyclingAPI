@@ -56,7 +56,6 @@ def race_link_to_race_id(a):
     """ Obtain race id from html a tag containing link to race page """
     return int(a['href'].split('r=')[1].split('&')[0])
 
-
 def race_link_to_stage_num(a):
     """ Obtain stage number from html a tag containing link to race stage page """
     return int(a['href'].split('e=')[1])
@@ -65,4 +64,4 @@ def race_link_to_stage_num(a):
 # TODO More Functions
 
 def parse_rider_td(td):
-    
+    return
