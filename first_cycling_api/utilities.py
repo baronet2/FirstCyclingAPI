@@ -26,6 +26,7 @@ profile_icon_map = {'Bakketempo.png': 'Mountain ITT',
             'Lagtempo.png': 'TTT'} # TODO Any more?
 
 uci_categories = ['2.2', '2.1', '2.HC', '2.WT1', '2.WT2', '2.WT3', '2.Pro', 'GT1', 'GT2', '1.2', '1.1', '1.HC', '1.WT1', '1.WT2', '1.WT3', '1.Pro']
+one_day_categories = ['1.2', '1.1', '1.HC', '1.WT1', '1.WT2', '1.WT3', '1.Pro']
 championships_categories = ['CN', 'CCRR', 'CCTT', 'CCU', 'CCUT', 'WCRR', 'WCTT', 'WCU', 'WCUT']
 U23_categories = ['1.2U', '2.2U', '1.NC', '2.NC']
 
