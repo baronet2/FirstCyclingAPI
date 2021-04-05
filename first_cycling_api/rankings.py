@@ -83,3 +83,11 @@ class Ranking:
 
 	def __repr__(self):
 		return "Ranking(" + self.url + ")"
+
+	def get_json(self):
+		return json.dumps(self, default=ComplexHandler)
+
+	def to_json(self):
+		d = vars(self).copy()
+		d['df'] = self.df.to_json() if self.df is not None else None
+		return d
