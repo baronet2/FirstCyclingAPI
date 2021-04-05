@@ -4,31 +4,31 @@ An unofficial API to obtain data from https://firstcycling.com/.
 
 ## Usage
 
-Rider information can be loaded into a `Rider` object. To load data for a rider, use the rider id from the rider's firstcycling.com page URL.
-For example, the id for Primoz Roglic is 18655 (see https://firstcycling.com/rider.php?r=18655)
+The following pages are currently mapped by the API:
+- Rider profile pages (e.g. https://firstcycling.com/rider.php?r=18655)
+- UCI Ranking pages (e.g. https://firstcycling.com/ranking.php?rank=1&y=2021-12)
+
+### Rider Profiles
+Rider information can be loaded into a `Rider` object with the rider id from the URL.
 
 ```python
 from first_cycling_api import *
 r = Rider(18655)
-print(vars(r)) # Shows all the attributes of the Rider object
+r.get_json() # Get the rider's attributes in JSON format
+r.get_results_dataframe() # Get a DataFrame with the rider's results
+help(Rider) # For more complete documentation on the Rider class
 ```
 
-The script loads rider's biographical information and the details and results for each season in which they were active.
-To only load data for specific years, pass a list of years to the `years` attribute.
+### UCI Rankings
+Ranking tables can be loaded into `Ranking` objects using either the URL or a combination of arguments.
 
-`Rider` and other objects can be obtained in JSON format using:
 ```python
-r.get_json()
-```
-
-A `pandas.DataFrame` with a rider's results can be obtained by calling:
-```python
-r.get_results_dataframe()
-```
-
-More complete documentation on each class and its attributes can be obtained using:
-```python
-help(r)
+from first_cycling_api import *
+ranking = Ranking(url='https://firstcycling.com/ranking.php?rank=2&h=1&y=2020&u23=&page=2') # Using the URL
+ranking = Ranking(ranking_type=2, ranking_category=1, year=2020, page_num=2) # Using arguments
+ranking.get_json() # Get the Ranking object in JSON format
+ranking.df # Rankings table in pandas.DataFrame format
+help(Ranking) # For more complete documentation on the Ranking class
 ```
 
 ## Contributing
