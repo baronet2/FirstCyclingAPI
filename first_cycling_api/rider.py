@@ -34,7 +34,7 @@ class Rider:
             If None, collect all years for which rider results are available
         """
         # Load rider page
-        url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + ('&y=' + str(years[0])) if years else ''
+        url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + (('&y=' + str(years[0])) if years else '')
         page = requests.get(url)
         soup = bs4.BeautifulSoup(page.text, 'html.parser')
 
