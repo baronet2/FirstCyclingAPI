@@ -1,6 +1,6 @@
 # First Cycling API
 
-An unofficial API to obtain data from https://firstcycling.com/.
+An unofficial Python API to obtain data from https://firstcycling.com/.
 
 ## Usage
 
