@@ -13,7 +13,7 @@ class Rider:
     
     Attributes
     ----------
-    id : int
+    rider_id : int
         FirstCycling.com id for the rider used in the url
     details : RiderDetails
         Rider's basic profile information
@@ -33,13 +33,21 @@ class Rider:
             List of years for which to collect data, default is None
             If None, collect all years for which rider results are available
         """
+
+        # Verify passed rider ID
+        try:
+            rider_id = int(rider_id)
+        except ValueError:
+            print("Invalid rider ID")
+            return
+        self.rider_id = rider_id
+        
         # Load rider page
         url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + (('&y=' + str(years[0])) if years else '')
         page = requests.get(url)
         soup = bs4.BeautifulSoup(page.text, 'html.parser')
 
         # Add basic details
-        self.id = rider_id
         self.details = RiderDetails(rider_id, soup=soup)
 
         # Add yearly details and results
@@ -51,15 +59,15 @@ class Rider:
         years = [year for year in years if year != year_showing]
 
         # Load details and results from most recent year directly from soup (avoids repeating requests)
-        self.year_details[year_showing] = RiderYearDetails(self.id, year_showing, soup=soup)
-        self.results[year_showing] = ResultsTable(self.id, year_showing, soup=soup)
+        self.year_details[year_showing] = RiderYearDetails(self.rider_id, year_showing, soup=soup)
+        self.results[year_showing] = ResultsTable(self.rider_id, year_showing, soup=soup)
         
         for year in years: # Load details and results for other years (avoids repeating requests)
             url = 'https://firstcycling.com/rider.php?r=' + str(rider_id) + '&y=' + str(year)
             page = requests.get(url)
             soup = bs4.BeautifulSoup(page.text, 'html.parser')            
-            self.year_details[year] = RiderYearDetails(self.id, year, soup=soup)
-            self.results[year] = ResultsTable(self.id, year, soup=soup)
+            self.year_details[year] = RiderYearDetails(self.rider_id, year, soup=soup)
+            self.results[year] = ResultsTable(self.rider_id, year, soup=soup)
 
 
     def get_results_dataframe(self, expand=False):
@@ -70,7 +78,7 @@ class Rider:
         return self.details.name
 
     def __repr__(self):
-        return "Rider(" + str(self.id) + ", " + self.details.name + ")"
+        return "Rider(" + str(self.rider_id) + ", " + self.details.name + ")"
 
     def get_json(self):
         return json.dumps(self, default=ComplexHandler)

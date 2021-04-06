@@ -41,7 +41,7 @@ def ComplexHandler(obj):
     if hasattr(obj, 'to_json'):
         return obj.to_json()
     else:
-        raise TypeError('Object of type %s with value of %s is not JSON serializable' % (type(Obj), repr(Obj)))
+        raise TypeError('Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj)))
 
 def rider_link_to_id(a):
     return int(a['href'].split('r=')[1])
