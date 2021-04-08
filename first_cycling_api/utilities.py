@@ -14,7 +14,7 @@ import re
 
 # Global constants ----
 
-colour_icons = ('green', 'red', 'yellow', 'pink', 'violet', 'blue', 'black', 'orange', 'lightblue', 'white') # TODO Any more?
+colour_icons = ('green', 'red', 'yellow', 'pink', 'violet', 'blue', 'black', 'orange', 'lightblue', 'white', 'polka', 'maillotmon') # TODO Any more?
 
 profile_icon_map = {'Bakketempo.png': 'Mountain ITT',
             'Fjell-MF.png': 'Mountain MTF',
