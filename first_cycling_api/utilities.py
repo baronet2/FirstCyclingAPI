@@ -61,8 +61,27 @@ def race_link_to_stage_num(a):
     """ Obtain stage number from html a tag containing link to race stage page """
     return int(a['href'].split('e=')[1])
 
+def table_of_riders_to_df(rankings_table):
+    """ Convert HTML table containing rankings/results table from bs4 to pandas DataFrame. Return None if no data. """
 
-# TODO More Functions
+    # Load pandas DataFrame from raw text only
+    out_df = pd.read_html(str(rankings_table), thousands='.')[0]
+    if out_df.iat[0, 0] == 'No data': # No data
+        return None
 
-def parse_rider_td(td):
-    return
+    # Parse soup to add information hidden in tags/links
+    headers = [th.text for th in rankings_table.tr.find_all('th')]
+    trs = rankings_table.find_all('tr')[1:]
+    soup_df = pd.DataFrame([tr.find_all('td') for tr in trs], columns=headers)
+
+    # Add information hidden in tags/links
+    if 'Rider' in headers:
+        out_df['Rider_ID'] = soup_df['Rider'].apply(lambda td: rider_link_to_id(td.a))
+        try:
+            out_df['Rider_Country'] = soup_df['Rider'].apply(lambda td: img_to_country_code(td.img))
+        except TypeError:
+            pass
+    if 'Team' in headers:
+        out_df['Team_ID'] = soup_df['Team'].apply(lambda td: team_link_to_id(td.a) if td.a else None)
+        out_df['Team_Country'] = soup_df['Team'].apply(lambda td: img_to_country_code(td.img) if td.img else None)
+    return out_df
