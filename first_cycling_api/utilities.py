@@ -9,6 +9,7 @@ import bs4
 import pandas as pd
 from dateutil.parser import parse
 import json
+import re
 
 
 # Global constants ----
@@ -61,11 +62,15 @@ def race_link_to_stage_num(a):
     """ Obtain stage number from html a tag containing link to race stage page """
     return int(a['href'].split('e=')[1])
 
+def img_to_profile(img):
+    """ Return profile type for image """
+    return profile_icon_map[img['src'].split('/')[-1]]
+
 def table_of_riders_to_df(rankings_table):
     """ Convert HTML table containing rankings/results table from bs4 to pandas DataFrame. Return None if no data. """
 
     # Load pandas DataFrame from raw text only
-    out_df = pd.read_html(str(rankings_table), thousands='.')[0]
+    out_df = pd.read_html(str(rankings_table), thousands='.')[0].dropna(how='all', axis=1)
     if out_df.iat[0, 0] == 'No data': # No data
         return None
 
