@@ -15,6 +15,8 @@ class RaceResults:
 		The url for the race results page
 	race_id : int
 		The firstcycling.com ID for the race
+	classification : str
+		# TODO!!!
 	race_name : str
 		The name of the race
 	year : int
@@ -46,7 +48,7 @@ class RaceResults:
 		For 'Combative', shows the rider ID for the rider who won the combative award in the stage.
 	"""
 
-	def __init__(self, url=None, race_id=None, year=None): # TODO l = 1, 2, 3, for classifications
+	def __init__(self, url=None, race_id=None, year=None, classification_num=None, stage_num=None):
 		"""
 		Initialize a Ranking object.
 
@@ -59,6 +61,8 @@ class RaceResults:
 			The firstcycling.com ID for the race
 		year : int
 			The year for the edition of interest
+		# TODO finish documentation
+		# TODO dummy <div id="gc" class="tab-content dummy"> for alternate tabs (load all or separately?) e.g. https://firstcycling.com/race.php?r=17&y=2018&e=7
 		"""
 
 		if not url: # Prepare URL with appropriate headers
@@ -66,6 +70,9 @@ class RaceResults:
 				raise TypeError('Must provide url or both race_id and year.')
 
 			url = "https://firstcycling.com/race.php?r=" + str(race_id) + '&y=' + str(year)
+			url += '&l=' + str(classification_num) if classification_num else '' # TODO use li class='current'
+			url += '&e=' + str(stage_num) if stage_num else '' # TODO use li class='current'
+
 
 		# Load webpage
 		self.url = url
@@ -107,6 +114,7 @@ class RaceResults:
 			self.nation = img_to_country_code(soup_details['Nation'].find_all('img')[-1])
 			self.start_city = self.end_city = soup_details['Nation'].find_all('img')[-1].next_sibling.strip()
 
+		# Get date
 		if 'Date' in details.index:
 			if ' - ' in details['Date']:
 				self.start_date, self.end_date = tuple([parse(x + ', ' + str(self.year)).date() for x in details['Date'].split(' - ')])
@@ -115,6 +123,7 @@ class RaceResults:
 		else:
 			self.start_date = self.end_date = None
 
+		# Get additional race information
 		self.distance = float(details['Distance'].split()[0]) if 'Distance' in details.index else None
 		self.cat = details['CAT'] if 'CAT' in details.index else None
 		self.stage_num = int(''.join([x for x in details['What'] if x.isnumeric()])) if 'What' in details.index else None
@@ -135,8 +144,6 @@ class RaceResults:
 			if classification in details:
 				self.classification_leaders[classification] = rider_link_to_id(soup_details[classification].a) # TODO save as Rider without loading page?
 		
-				
-
 	def __repr__(self):
 		return "Results(" + self.race_name + ", " + str(self.year) + ")"
 
