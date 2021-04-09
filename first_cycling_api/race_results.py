@@ -163,5 +163,8 @@ class RaceResults:
 
 	def to_json(self):
 		d = vars(self).copy()
+		d['start_date'] = str(d['start_date'])
+		d['end_date'] = str(d['end_date'])
 		d['df'] = self.df.to_json() if self.df is not None else None
+		d['standings'] = {k: v.to_json() for k, v in d['standings'].items()}
 		return d
