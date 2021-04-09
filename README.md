@@ -37,8 +37,8 @@ Race results can be loaded into `RaceResults` objects using either the URL or a 
 
 ```python
 from first_cycling_api import *
-results = first_cycling_api.RaceResults(race_id=9, year=2019) # Using arguments
-results = first_cycling_api.RaceResults(url='https://firstcycling.com/race.php?r=9&y=2019&l=1') # Using the URL
+results = RaceResults(race_id=9, year=2019) # Using arguments
+results = RaceResults(url='https://firstcycling.com/race.php?r=9&y=2019&l=1') # Using the URL
 results.get_json() # Get the RaceResults object in JSON format
 results.df # Results table in pandas.DataFrame format
 help(RaceResults) # For more complete documentation on the Ranking class
