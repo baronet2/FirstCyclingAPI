@@ -16,7 +16,7 @@ class RaceResults:
 	race_id : int
 		The firstcycling.com ID for the race
 	classification : str
-		# TODO!!!
+		The name of the classification for which results are loaded
 	race_name : str
 		The name of the race
 	year : int
@@ -75,8 +75,8 @@ class RaceResults:
 				raise TypeError('Must provide url or both race_id and year.')
 
 			url = "https://firstcycling.com/race.php?r=" + str(race_id) + '&y=' + str(year)
-			url += '&l=' + str(classification_num) if classification_num else '' # TODO use li class='current'
-			url += '&e=' + str(stage_num) if stage_num else '' # TODO use li class='current'
+			url += '&l=' + str(classification_num) if classification_num else ''
+			url += '&e=' + str(stage_num) if stage_num else ''
 
 		# Load webpage
 		self.url = url
@@ -96,6 +96,9 @@ class RaceResults:
 		if not results_table:
 			results_table = soup.find('table', {'class': 'sortTabell tablesorter'})
 		self.df = table_of_riders_to_df(results_table)
+
+		# Classification name
+		self.classification = soup.find('li', {'class': 'current'}).text if soup.find('li', {'class': 'current'}) else None
 
 		# Standings after stage
 		divs = soup.find_all('div', {'class': "tab-content dummy"})
@@ -152,9 +155,6 @@ class RaceResults:
 			if classification in details:
 				self.classification_leaders[classification] = rider_link_to_id(soup_details[classification].a) # TODO save as Rider without loading page?
 
-		
-
-		
 	def __repr__(self):
 		return "Results(" + self.race_name + ", " + str(self.year) + ")"
 
