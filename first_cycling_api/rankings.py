@@ -4,29 +4,6 @@ author: Ethan Baron
 
 from .utilities import *
 
-
-def get_df(rankings_table):
-	""" Convert HTML table containing rankings from bs4 to pandas DataFrame. Return None if no data. """
-
-	# Load pandas DataFrame from raw text only
-	out_df = pd.read_html(str(rankings_table), thousands='.')[0]
-	if out_df.iat[0, 0] == 'No data': # No data
-		return None
-
-	# Parse soup to add information hidden in tags/links
-	headers = [th.text for th in rankings_table.tr.find_all('th')]
-	trs = rankings_table.find_all('tr')[1:]
-	soup_df = pd.DataFrame([tr.find_all('td') for tr in trs], columns=headers)
-
-	# Add information hidden in tags/links
-	if 'Rider' in headers:
-		out_df['Rider_ID'] = soup_df['Rider'].apply(lambda td: rider_link_to_id(td.a))
-	if 'Team' in headers:
-		out_df['Team_ID'] = soup_df['Team'].apply(lambda td: team_link_to_id(td.a) if td.a else None)
-		out_df['Team_Country'] = soup_df['Team'].apply(lambda td: img_to_country_code(td.img) if td.img else None)
-	return out_df
-
-
 class Ranking:
 	"""
 	A framework to store Ranking data.
@@ -79,7 +56,7 @@ class Ranking:
 
 		# Parse rankings from page
 		rankings_table = soup.find('table', {'class': 'tablesorter sort'})
-		self.df = get_df(rankings_table)
+		self.df = table_of_riders_to_df(rankings_table)
 
 	def __repr__(self):
 		return "Ranking(" + self.url + ")"
