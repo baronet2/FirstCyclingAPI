@@ -42,10 +42,12 @@ class RaceResults:
 	df : pd.DataFrame
 		A dataframe containing the results from the race, or None if there is no data for that page
 	stage_num : int
-		The stage number or None if not applicable. 0 indicated prologue.
+		The stage number or None if not applicable. 0 indicates prologue.
 	classification_leaders : dict {str : int}
 		A dictionary mapping classification to the rider ID of the leader after the stage, if applicable
 		For 'Combative', shows the rider ID for the rider who won the combative award in the stage.
+	standings : dict {str : pandas.DataFrame}
+		A dictionary mapping classifications to a pandas DataFrame containing the standings for the classification after the stage, if applicable
 	"""
 
 	def __init__(self, url=None, race_id=None, year=None, classification_num=None, stage_num=None):
@@ -61,8 +63,11 @@ class RaceResults:
 			The firstcycling.com ID for the race
 		year : int
 			The year for the edition of interest
-		# TODO finish documentation
-		# TODO dummy <div id="gc" class="tab-content dummy"> for alternate tabs (load all or separately?) e.g. https://firstcycling.com/race.php?r=17&y=2018&e=7
+		classification_num : int
+			The argument apssed to the 'l' argument in the URL
+			{1: 'GC', 2: 'Youth', 3: 'Points', 4: 'Mountain', 7: 'Combined'}
+		stage_num : int
+			The stage number for the stage of interest
 		"""
 
 		if not url: # Prepare URL with appropriate headers
@@ -72,7 +77,6 @@ class RaceResults:
 			url = "https://firstcycling.com/race.php?r=" + str(race_id) + '&y=' + str(year)
 			url += '&l=' + str(classification_num) if classification_num else '' # TODO use li class='current'
 			url += '&e=' + str(stage_num) if stage_num else '' # TODO use li class='current'
-
 
 		# Load webpage
 		self.url = url
@@ -92,6 +96,10 @@ class RaceResults:
 		if not results_table:
 			results_table = soup.find('table', {'class': 'sortTabell tablesorter'})
 		self.df = table_of_riders_to_df(results_table)
+
+		# Standings after stage
+		divs = soup.find_all('div', {'class': "tab-content dummy"})
+		self.standings = {div['id']: table_of_riders_to_df(div.table) for div in divs}
 
 		# Load information on right sidebar
 		info_table = soup.find('table', {'class': 'tablesorter notOddEven'})
@@ -143,6 +151,9 @@ class RaceResults:
 		for classification in ['Leader', 'Youth', 'Points', 'Mountain', 'Combative']: # TODO Any others?
 			if classification in details:
 				self.classification_leaders[classification] = rider_link_to_id(soup_details[classification].a) # TODO save as Rider without loading page?
+
+		
+
 		
 	def __repr__(self):
 		return "Results(" + self.race_name + ", " + str(self.year) + ")"

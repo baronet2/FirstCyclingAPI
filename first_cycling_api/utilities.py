@@ -71,6 +71,8 @@ def table_of_riders_to_df(rankings_table):
 
     # Load pandas DataFrame from raw text only
     out_df = pd.read_html(str(rankings_table), thousands='.')[0].dropna(how='all', axis=1)
+    out_df = out_df[[c for c in out_df.columns if 'Unnamed' not in c]]
+    
     if out_df.iat[0, 0] == 'No data': # No data
         return None
 
