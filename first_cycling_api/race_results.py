@@ -7,7 +7,7 @@ from .utilities import *
 
 class RaceResults:
 	"""
-	A framework to store Results from a race edition.
+	A framework to store results from a race edition, stage, or classification.
 
 	Attributes
 	----------
