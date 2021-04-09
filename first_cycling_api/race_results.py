@@ -52,7 +52,7 @@ class RaceResults:
 
 	def __init__(self, url=None, race_id=None, year=None, classification_num=None, stage_num=None):
 		"""
-		Initialize a Ranking object.
+		Initialize a RaceResults object.
 
 		Arguments
 		---------
