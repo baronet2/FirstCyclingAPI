@@ -7,6 +7,7 @@ An unofficial Python API to obtain data from https://firstcycling.com/.
 The following pages are currently mapped by the API:
 - Rider profile pages (e.g. https://firstcycling.com/rider.php?r=18655)
 - UCI Ranking pages (e.g. https://firstcycling.com/ranking.php?rank=1&y=2021-12)
+- Race results pages (e.g. https://firstcycling.com/race.php?r=9&y=2019)
 
 ### Rider Profiles
 Rider information can be loaded into a `Rider` object with the rider id from the URL.
@@ -29,6 +30,18 @@ ranking = Ranking(ranking_type=2, ranking_category=1, year=2020, page_num=2) # U
 ranking.get_json() # Get the Ranking object in JSON format
 ranking.df # Rankings table in pandas.DataFrame format
 help(Ranking) # For more complete documentation on the Ranking class
+```
+
+### Race Results
+Race results can be loaded into `RaceResults` objects using either the URL or a combination of arguments.
+
+```python
+from first_cycling_api import *
+results = first_cycling_api.RaceResults(race_id=9, year=2019) # Using arguments
+results = first_cycling_api.RaceResults(url='https://firstcycling.com/race.php?r=9&y=2019&l=1') # Using the URL
+results.get_json() # Get the RaceResults object in JSON format
+results.df # Results table in pandas.DataFrame format
+help(RaceResults) # For more complete documentation on the Ranking class
 ```
 
 ## Contributing
