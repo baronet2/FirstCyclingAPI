@@ -16,7 +16,7 @@ class RaceEndpoint(Endpoint):
 
 	def _get_editions(self):
 		soup = bs4.BeautifulSoup(self.response, 'html.parser')
-		return [int(o['value']) for o in soup.find('select').find_all('option') if o['value']]
+		return [int(o['value']) for o in soup.find('select', {'name': 'y'}).find_all('option') if o['value']]
 
 class RaceOverview(RaceEndpoint):
 	def __init__(self, race_id, classification_num=None):
@@ -32,6 +32,13 @@ class RaceVictoryTable(RaceEndpoint):
 	def __init__(self, race_id):
 		params = {'r': race_id, 'k': 'W'}
 		self.make_request(params)
+		self.soup = bs4.BeautifulSoup(self.response, 'html.parser')
+		self._get_victory_table()
+		del self.soup
+
+	def _get_victory_table(self):
+		victory_table = self.soup.find('table', {'class': 'tablesorter'})
+		self.table = table_parser(victory_table)
 
 class RaceStageVictories(RaceEndpoint):
 	def __init__(self, race_id):
