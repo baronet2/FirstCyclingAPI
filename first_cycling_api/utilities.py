@@ -65,6 +65,9 @@ class FirstCyclingObject:
 
 
 # Global constants ----
+
+# TODO all countries and country codes?
+
 current_year = date.today().year
 
 colour_icons = ('green', 'red', 'yellow', 'pink', 'violet', 'blue', 'black', 'orange', 'lightblue', 'white', 'polka', 'maillotmon') # TODO Any more?
