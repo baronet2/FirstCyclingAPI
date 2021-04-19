@@ -62,6 +62,7 @@ class FirstCyclingObject:
 
 
 # Global constants ----
+current_year = date.today().year
 
 colour_icons = ('green', 'red', 'yellow', 'pink', 'violet', 'blue', 'black', 'orange', 'lightblue', 'white', 'polka', 'maillotmon') # TODO Any more?
 
@@ -158,10 +159,10 @@ def table_parser(table):
 
     # Add information hidden in tags
     for col, series in soup_df.iteritems():
-        if col == 'Rider':
-            out_df['Rider_ID'] = series.apply(lambda td: rider_link_to_id(td.a))
+        if col in ('Rider', 'Winner', 'Second', 'Third'):
+            out_df[col + '_ID'] = series.apply(lambda td: rider_link_to_id(td.a))
             try:
-                out_df['Rider_Country'] = series.apply(lambda td: img_to_country_code(td.img))
+                out_df[col + '_Country'] = series.apply(lambda td: img_to_country_code(td.img))
             except TypeError:
                 pass
 
@@ -171,6 +172,7 @@ def table_parser(table):
 
         elif col == 'Race':
             out_df['Race_ID'] = series.apply(lambda td: get_url_parameters(td.a['href'])['r'] if td.a else None)
+            out_df['Race_Country'] = series.apply(lambda td: img_to_country_code(td.img) if td.img else None)
 
         elif col == '':
             try:
