@@ -28,6 +28,9 @@ class Endpoint:
         del d['response']
         return d
 
+    def get_json(self):
+        return json.dumps(self, default=ComplexHandler)
+
     def __repr__(self):
         return self.__class__.__name__ + '(' + self.url + ')'
 
