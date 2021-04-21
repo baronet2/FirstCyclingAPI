@@ -8,60 +8,40 @@ class Ranking(Endpoint):
 	"""
 	base_url = 'https://firstcycling.com/ranking.php?'
 
-	def __init__(self, params):
+	def __init__(self, **kwargs):
 		"""
 		Parameters:
 		-----------
-		params : dict {str: str or int or None}
-			The query parameters to add to the rankings URL.
-
-			For UCI Ranking:
-				'rank': int
-					The ranking type (1: 'World', 2: 'One-day race', 3: 'Stage race', 4: 'Africa Tour', 5: 'America Tour', 6: 'Europe Tour', 7: 'Asia Tour', 8: 'Oceania Tour', 99: 'Women')
-				'h': int
-					The ranking category (1: 'Riders', 2: 'Teams', 3: 'Nations')
-				'y': int or str
-					If int, returns ranking for that particular year, e.g. 2021
-					If str, format as "yyyy-w" with year and week, e.g. '2021-7' returns the rankings in week 7 of 2021
-				'cnat': str, optional
-					The three-letter code for the country to filter results to, e.g. 'BEL'
-				'u23': {1, None}, optional, default None
-					If 1, include results for under-23 riders only
-				'page_num': int, optional, default 1
-					The desired page number of the ranking
-
-			For National Ranking:
-				'k': {'nat'}
-				'nation': {'bel', 'den', 'fra', 'ita', 'ned', 'nor'}
-					The three-letter code for the country {'bel', 'den', 'fra', 'ita', 'ned', 'nor'}
-				'y': int
-					Year of rankings
-				'race': {1, None}, optional, default None
-					If 1, return races considered in ranking
-
-			For FirstCycling Ranking:
-				'k': {'fc'}
-				'rank': {'el', 'jr', 'wel', 'wjr'}
-					Category of rankings {'el': Men Elite, 'jr': Men Junior, 'wel': Women Elite, 'wjr': Women Junior}
-				'y': int or 'all'
-					Year of rankings, 'all' returns podium finishers per year
-				'U23': {1, None}, optional, default None
-					If 1, include U23 riders only. Not valid if 'y' = 'all' or junior rankings requested.
-
-			For FirstCycling Amateur:
-				'k': {'ama'}
-				'nat': {'aus', bel', 'den', 'fra', 'ita', 'jpn', 'nor', 'esp', 'gbr', 'usa'}
-					The three-letter code for the country
-				'y': int
-					Year of rankings
-				'cnat': str, optional, default None
-					The three-letter code, capitalized, for the country of riders to filter
-				'U23': {1, None}, optional, default None
-					If 1, include U23 riders only.
-		
+		rank : int
+			For UCI Ranking, {1: 'World', 2: 'One-day race', 3: 'Stage race', 4: 'Africa Tour', 5: 'America Tour', 6: 'Europe Tour', 7: 'Asia Tour', 8: 'Oceania Tour', 99: 'Women'}
+			For FirstCycling Ranking, {'el': Men Elite, 'jr': Men Junior, 'wel': Women Elite, 'wjr': Women Junior}
+		h : int
+			For UCI Ranking, {1: 'Riders', 2: 'Teams', 3: 'Nations'}
+		y : int or str
+			If int, returns ranking for that particular year, e.g. 2021
+			For UCI Ranking, if str, format as 'yyyy-w' with year and week, e.g. '2021-7' returns the rankings in week 7 of 2021
+			For FirstCycling Ranking, 'all' returns podium finishers per year
+		cnat : str
+			For UCI Ranking and FirstCycling Amateur, the three-letter code for the country to filter riders to, e.g. 'BEL'
+		u23 : int
+			For UCI Ranking, if 1 include results for under-23 riders only
+		page_num : int
+			The desired page number of the ranking
+		k : str
+			For National Ranking, 'nat'
+			For FirstCycling Ranking, 'fc'
+			For FirstCycling Amateur, 'ama'
+		nation : str
+			For National Ranking, the three-letter code for the country, one of {'bel', 'den', 'fra', 'ita', 'ned', 'nor'}
+		race : int
+			For National Ranking, if 1, load races considered in ranking
+		U23 : int
+			For FirstCycling Ranking and FirstCycling Amateur, if 1 include results for under-23 riders only
+		nat : str
+			For FirstCycling Amateur, three-letter code for country, one of {'aus', bel', 'den', 'fra', 'ita', 'jpn', 'nor', 'esp', 'gbr', 'usa'}		
 		"""
 
-		self.make_request(params)
+		self.make_request(kwargs)
 		self.soup = bs4.BeautifulSoup(self.response, 'html.parser')
 		self._get_page_nums()
 		self._get_rankings_table()
