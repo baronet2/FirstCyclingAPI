@@ -65,7 +65,10 @@ class RaceEditionResults(RaceEndpoint):
 		del self.soup
 
 	def _get_results_table(self):
+		# TODO Load all classification standings after stage
 		results_table = self.soup.find('table', {'class': 'sortTabell tablesorter'})
+		if not results_table:
+			results_table = self.soup.find('table', {'class': 'sortTabell2 tablesorter'})
 		self.results_table = table_parser(results_table)
 
 	def _get_sidebar_information(self):
@@ -130,8 +133,9 @@ class Race(FirstCyclingObject):
 	def get_edition_information(self, year):
 		return self._get_edition_endpoint(RaceEditionInformation, year, 'information')
 
-	def get_edition_results(self, year, classification_num=None, stage_num=None): # Also upddate information from right sidebar if missing
-		return self._get_edition_endpoint(RaceEditionResults, year, 'results', classification_num=classification_num, stage_num=stage_num)
+	def get_edition_results(self, year, classification_num=None, stage_num=None): # Also update information from right sidebar if missing
+		key = 'results' + ('_' + classifications[classification_num] if classification_num else ('_stage_' + str(stage_num) if stage_num else ''))
+		return self._get_edition_endpoint(RaceEditionResults, year, key, classification_num=classification_num, stage_num=stage_num)
 
 	def get_edition_stage_profiles(self, year):
 		self._get_edition_endpoint(RaceEditionStageProfiles, year, 'stage_profiles')
