@@ -1,7 +1,3 @@
-"""
-author: Ethan Baron
-"""
-
 # Import packages ----
 
 import requests
