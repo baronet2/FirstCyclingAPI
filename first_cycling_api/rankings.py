@@ -40,7 +40,8 @@ class Ranking(Endpoint):
 		nat : str
 			For FirstCycling Amateur, three-letter code for country, one of {'aus', bel', 'den', 'fra', 'ita', 'jpn', 'nor', 'esp', 'gbr', 'usa'}		
 		"""
-
+		if not kwargs:
+			raise ValueError("Must pass some arguments to obtain Ranking. See help(Ranking) for details.")
 		self.make_request(kwargs)
 		self.soup = bs4.BeautifulSoup(self.response, 'html.parser')
 		self._get_page_nums()
