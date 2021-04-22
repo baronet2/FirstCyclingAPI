@@ -66,7 +66,9 @@ class FirstCyclingObject:
 
 # Global constants ----
 
-# TODO all countries and country codes?
+# TODO all countries and country codes? - enum?
+
+classifications = {1: 'general', 2: 'youth', 3: 'points', 4: 'mountain', 6: 'sprint'}
 
 current_year = date.today().year
 
