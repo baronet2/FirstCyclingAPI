@@ -56,4 +56,4 @@ class Ranking(Endpoint):
 		rankings_table = self.soup.find('table', {'class': 'tablesorter sort'})
 		if not rankings_table:
 			rankings_table = self.soup.find('table', {'class': 'tablesorter'})
-		self.table = table_parser(rankings_table)
+		self.table = parse_table(rankings_table)

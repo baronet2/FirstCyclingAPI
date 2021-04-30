@@ -286,7 +286,7 @@ def img_to_profile(img):
 
 # Parsing tables ----
 
-def table_parser(table):
+def parse_table(table):
     """ Convert HTML table from bs4 to pandas DataFrame. Return None if no data. """
 
     # Load pandas DataFrame from raw text only

@@ -80,7 +80,7 @@ class RiderYearResults(RiderEndpoint):
 	def _get_year_results(self):
 		# Find table with results
 		table = self.soup.find('table', {'class': "sortTabell tablesorter"})
-		self.results_df = table_parser(table)
+		self.results_df = parse_table(table)
 
 class RiderBestResults(RiderEndpoint):
 	def __init__(self, rider_id):
