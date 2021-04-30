@@ -49,8 +49,8 @@ print(r.table)
 
 The following endpoint pages are currently mapped by the API:
 
-- Rider pages (starting with https://firstcycling.com/rider.php?)
-- Race pages (starting with https://firstcycling.com/race.php?)
+- Rider pages (starting with https://firstcycling.com/rider.php?r=)
+- Race pages (starting with https://firstcycling.com/race.php?r=)
 - Ranking pages (starting with https://firstcycling.com/ranking.php?)
 
 See the list of endpoints in the respective files.
@@ -59,7 +59,7 @@ See the list of endpoints in the respective files.
 Contributions are welcome! Please feel free to open issues, pull requests, and/or discussions.
 
 Especially, there is room to help with:
-- Mapping additional endpoints (e.g. pages starting with https://firstcycling.com/team.php?)
+- Mapping additional endpoints (e.g. pages starting with https://firstcycling.com/team.php?, or https://firstcycling.com/race.php?y=)
 - Parsing results from additional pages (e.g. race startlists, race statistics)
 
 ## License
