@@ -8,6 +8,7 @@ from datetime import date
 import json
 import re
 from urllib import parse as url_parse
+from enum import Enum
 
 # Base classes ----
 
@@ -62,13 +63,20 @@ class FirstCyclingObject:
 
 # Global constants ----
 
-# TODO all countries and country codes? - enum?
-
-classifications = {1: 'general', 2: 'youth', 3: 'points', 4: 'mountain', 6: 'sprint'}
-
 current_year = date.today().year
 
 colour_icons = ('green', 'red', 'yellow', 'pink', 'violet', 'blue', 'black', 'orange', 'lightblue', 'white', 'polka', 'maillotmon') # TODO Any more?
+
+uci_categories = ['2.2', '2.1', '2.HC', '2.WT1', '2.WT2', '2.WT3', '2.Pro', 'GT1', 'GT2', '1.2', '1.1', '1.HC', '1.WT1', '1.WT2', '1.WT3', '1.Pro']
+one_day_categories = ['1.2', '1.1', '1.HC', '1.WT1', '1.WT2', '1.WT3', '1.Pro']
+championships_categories = ['CN', 'CCRR', 'CCTT', 'CCU', 'CCUT', 'WCRR', 'WCTT', 'WCU', 'WCUT']
+U23_categories = ['1.2U', '2.2U', '1.NC', '2.NC']
+
+
+# Global enums ----
+
+classifications = {'general': 1, 'youth': 2, 'points': 3, 'mountain': 4, 'sprint': 6}
+Classification = Enum('Classification', classifications)
 
 profile_icon_map = {'Bakketempo.png': 'Mountain ITT',
             'Fjell-MF.png': 'Mountain MTF',
@@ -79,12 +87,105 @@ profile_icon_map = {'Bakketempo.png': 'Mountain ITT',
             'Tempo.png': 'Flat ITT',
             'Brosten.png': 'Cobbles',
             'Lagtempo.png': 'TTT'} # TODO Any more?
+Profile = Enum('Profile', profile_icon_map)
 
-uci_categories = ['2.2', '2.1', '2.HC', '2.WT1', '2.WT2', '2.WT3', '2.Pro', 'GT1', 'GT2', '1.2', '1.1', '1.HC', '1.WT1', '1.WT2', '1.WT3', '1.Pro']
-one_day_categories = ['1.2', '1.1', '1.HC', '1.WT1', '1.WT2', '1.WT3', '1.Pro']
-championships_categories = ['CN', 'CCRR', 'CCTT', 'CCU', 'CCUT', 'WCRR', 'WCTT', 'WCU', 'WCUT']
-U23_categories = ['1.2U', '2.2U', '1.NC', '2.NC']
-
+class Country(Enum):
+	ALB = "Albania"
+	ALG = "Algeria"
+	ARG = "Argentina"
+	AUS = "Australia"
+	AUT = "Austria"
+	AZE = "Azerbaijan"
+	BLR = "Belarus"
+	BEL = "Belgium"
+	BEN = "Benin"
+	BER = "Bermuda"
+	BRA = "Brazil"
+	VGB = "British Virgin Islands"
+	BUL = "Bulgaria"
+	BFA = "Burkina Faso"
+	CMR = "Cameroon"
+	CAN = "Canada"
+	CHI = "Chile"
+	CHN = "China"
+	COL = "Colombia"
+	CRC = "Costa Rica"
+	CRO = "Croatia"
+	CYP = "Cyprus"
+	CZE = "Czech Republic"
+	DEN = "Denmark"
+	CDR = "DR Congo"
+	ECU = "Ecuador"
+	EGY = "Egypt"
+	SLV = "El Salvador"
+	ERI = "Eritrea"
+	EST = "Estonia"
+	ETH = "Ethiopia"
+	FIN = "Finland"
+	FRA = "France"
+	GER = "Germany"
+	GBR = "Great Britain"
+	GRE = "Greece"
+	GUA = "Guatemala"
+	HON = "Honduras"
+	HUN = "Hungary"
+	ISL = "Iceland"
+	IRL = "Ireland"
+	ISR = "Israel"
+	ITA = "Italy"
+	CIV = "Ivory Coast"
+	JPN = "Japan"
+	KAZ = "Kazakhstan"
+	KEN = "Kenya"
+	KOS = "Kosovo"
+	LAO = "Laos"
+	LAT = "Latvia"
+	LES = "Lesotho"
+	LTU = "Lithuania"
+	LUX = "Luxembourg"
+	MKD = "Macedonia"
+	MAS = "Malaysia"
+	MRI = "Mauritius"
+	MEX = "Mexico"
+	MDA = "Moldova"
+	MGL = "Mongolia"
+	MAR = "Morocco"
+	NAM = "Namibia"
+	NED = "Netherlands"
+	NZL = "New Zealand"
+	NCA = "Nicaragua"
+	NOR = "Norway"
+	PAN = "Panama"
+	PAR = "Paraguay"
+	PER = "Peru"
+	POL = "Poland"
+	POR = "Portugal"
+	PUR = "Puerto Rico"
+	QAT = "Qatar"
+	ROM = "Romania"
+	RUS = "Russia"
+	RWA = "Rwanda"
+	KSA = "Saudi Arabia"
+	SBA = "Serbia"
+	SVK = "Slovakia"
+	SLO = "Slovenia"
+	RSA = "South Africa"
+	KOR = "South Korea"
+	ESP = "Spain"
+	VIN = "St.Vincent&Grenadines"
+	SUD = "Sudan"
+	SWE = "Sweden"
+	SUI = "Switzerland"
+	TPE = "Taiwan"
+	TAN = "Tanzania"
+	THA = "Thailand"
+	TUR = "Turkey"
+	UGA = "Uganda"
+	UKR = "Ukraine"
+	URU = "Uruguay"
+	USA = "USA"
+	UZB = "Uzbekistan"
+	VEN = "Venezuela"
 
 # JSON Serialization ----
 
