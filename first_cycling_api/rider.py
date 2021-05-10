@@ -44,16 +44,12 @@ class RiderEndpoint(Endpoint):
 
 		return sidebar_details
 
-class RiderYearResults(RiderEndpoint):
-	def __init__(self, rider_id, year=None):
-		params = {'r': rider_id, 'y': year}
-		self.make_request(params)
+class RiderYearResults(ParsedEndpoint, RiderEndpoint):
+	params = {'y': current_year}
 
-		self.soup = bs4.BeautifulSoup(self.response, 'html.parser')
-		self.year = int(self.soup.find('option', selected=True)['value'])
+	def parse_soup(self):
 		self._get_year_details()
 		self._get_year_results()
-		del self.soup
 
 	def _get_year_details(self):
 		# Find table with details
@@ -83,49 +79,31 @@ class RiderYearResults(RiderEndpoint):
 		self.results_df = parse_table(table)
 
 class RiderBestResults(RiderEndpoint):
-	def __init__(self, rider_id):
-		params = {'r': rider_id, 'high': 1}
-		self.make_request(params)
+	params = {'high': 1}
 
 class RiderVictories(RiderEndpoint):
-	def __init__(self, rider_id, uci=0):
-		params = {'r': rider_id, 'high': 1, 'k': 1, 'uci': uci}
-		self.make_request(params)
+	params = {'high': 1, 'k': 1, 'uci': 0}
 
 class RiderMonumentResults(RiderEndpoint):
-	def __init__(self, rider_id):
-		params = {'r': rider_id, 'high': 1, 'k': 3}
-		self.make_request(params)
+	params = {'high': 1, 'k': 3}
 
 class RiderRaceHistory(RiderEndpoint):
-	def __init__(self, rider_id, race_id):
-		params = {'r': rider_id, 'ra': race_id}
-		self.make_request(params)
+	params = {'ra': None}
 
 class RiderTeamAndRanking(RiderEndpoint):
-	def __init__(self, rider_id):
-		params = {'r': rider_id, 'stats': 1}
-		self.make_request(params)
+	params = {'stats': 1}
 
 class RiderRaceHistory(RiderEndpoint):
-	def __init__(self, rider_id):
-		params = {'r': rider_id, 'stats': 1, 'k': 1}
-		self.make_request(params)
+	params = {'stats': 1, 'k': 1}
 
 class RiderOneDayRaces(RiderEndpoint):
-	def __init__(self, rider_id):
-		params = {'r': rider_id, 'stats': 1, 'k': 2}
-		self.make_request(params)
+	params = {'stats': 1, 'k': 2}
 
 class RiderStageRaces(RiderEndpoint):
-	def __init__(self, rider_id):
-		params = {'r': rider_id, 'stats': 1, 'k': 3}
-		self.make_request(params)
+	params = {'stats': 1, 'k': 3}
 
 class RiderTeams(RiderEndpoint):
-	def __init__(self, rider_id):
-		params = {'r': rider_id, 'teams': 1}
-		self.make_request(params)
+	params = {'teams': 1}
 
 
 # Rider ----
@@ -144,6 +122,10 @@ class Rider(FirstCyclingObject):
 			self.sidebar_details = endpoint._get_sidebar_details()
 			self.years_active = endpoint._get_years_active()
 
+	def _prepare_endpoint_params(self, kwargs):
+		kwargs['r'] = self.ID
+		return kwargs
+
 	def get_years(self, years=None):
 		if years is None:
 			if not self.years_active: # Get first unloaded year
@@ -155,10 +137,10 @@ class Rider(FirstCyclingObject):
 	def get_year(self, year=None):
 		""" If None, loads most recent unloaded year. """
 		if year:
-			return self._get_endpoint(RiderYearResults, 'results', year, year)
+			return self._get_endpoint(RiderYearResults, 'results', year, y=year)
 		elif self.years_active: # Get first unloaded year
 			year = [year for year in self.years_active if year not in self.results][0]
-			return self._get_endpoint(RiderYearResults, 'results', year, year)
+			return self._get_endpoint(RiderYearResults, 'results', year, y=year)
 		else:
 			year_results = RiderYearResults(self.ID)
 			self.results[year_results.year] = year_results
@@ -178,7 +160,7 @@ class Rider(FirstCyclingObject):
 		return self._get_endpoint(RiderMonumentResults, 'monument_results')
 
 	def get_race_history(self, race_id):
-		return self._get_endpoint(RiderRaceHistory, 'race_history', race_id, race_id)
+		return self._get_endpoint(RiderRaceHistory, 'race_history', race_id, ra=race_id)
 
 	def get_team_and_ranking(self):
 		return self._get_endpoint(RiderTeamAndRanking, 'team_and_ranking')
