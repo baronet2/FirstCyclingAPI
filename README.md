@@ -24,7 +24,7 @@ The results for a certain edition of a race can be obtained as a `pandas.DataFra
 from first_cycling_api import Race
 r = Race(9)  # Use the FirstCycling ID for the race (found in the race page URL)
 r.get_edition_results(2019)
-print(r.editions[2019]['results'].results_table)
+print(r.editions[2019].results.results_table)
 ```
 
 Objects can be exported in JSON format by using the `r.get_json()` method.
