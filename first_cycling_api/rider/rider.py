@@ -1,5 +1,5 @@
 from ..objects import FirstCyclingObject
-from .endpoints import RiderEndpoint
+from .endpoints import RiderEndpoint, RiderYearResults
 from ..api import fc
 
 class Rider(FirstCyclingObject):
@@ -10,7 +10,7 @@ class Rider(FirstCyclingObject):
 
 	def year_results(self, year=None):
 		""" Get rider details and results for given year. """
-		return self._get_endpoint(y=year)
+		return self._get_endpoint(endpoint=RiderYearResults, y=year)
 
 	def best_results(self):
 		""" Get the rider's best results. """

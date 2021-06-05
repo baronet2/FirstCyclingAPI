@@ -1,5 +1,5 @@
 from ..objects import FirstCyclingObject
-from .endpoints import RaceEndpoint
+from .endpoints import RaceEndpoint, RaceVictoryTable, RaceStageVictories, RaceEditionResults
 from ..api import fc
 
 class Race(FirstCyclingObject):
@@ -15,7 +15,7 @@ class Race(FirstCyclingObject):
 		return self._get_endpoint(k=classification_num)
 
 	def victory_table(self):
-		return self._get_endpoint(k='W')
+		return self._get_endpoint(endpoint=RaceVictoryTable, k='W')
 
 	def year_by_year(self, classification_num=None):
 		return self._get_endpoint(k='X', j=classification_num)	
@@ -24,7 +24,7 @@ class Race(FirstCyclingObject):
 		return self._get_endpoint(k='Y')
 	
 	def stage_victories(self):
-		return self._get_endpoint(k='Z')
+		return self._get_endpoint(endpoint=RaceStageVictories, k='Z')
 
 
 class RaceEdition(FirstCyclingObject):
@@ -41,7 +41,7 @@ class RaceEdition(FirstCyclingObject):
 		return fc.get_race_endpoint(self.ID, y=self.year, **kwargs)
 
 	def results(self, classification_num=None, stage_num=None):
-		return self._get_endpoint(l=classification_num, e=stage_num)
+		return self._get_endpoint(endpoint=RaceEditionResults, l=classification_num, e=stage_num)
 
 	def stage_profiles(self):
 		return self._get_endpoint(e='all')

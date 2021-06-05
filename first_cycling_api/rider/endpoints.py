@@ -1,5 +1,5 @@
 from ..endpoints import ParsedEndpoint
-from ..parser import parse_date
+from ..parser import parse_date, parse_table
 
 import pandas as pd
 import bs4
@@ -41,3 +41,48 @@ class RiderEndpoint(ParsedEndpoint):
 			self.sidebar_details['strengths'] = [x.strip() for x in td if isinstance(x, bs4.element.NavigableString)]
 		else:
 			self.sidebar_details['strengths'] = []
+
+
+class RiderYearResults(RiderEndpoint):
+	"""
+	An endpoint for rider's results in a certain year. Extends ParsedEndpoint.
+
+	Attributes
+	----------
+	year_details : dict
+		The year-specific rider details from the page.
+	results_df : pd.DataFrame
+		A DataFrame containing the rider's results from the year.
+	"""
+
+	def _parse_soup(self):
+		super()._parse_soup()
+		self._get_year_details()
+		self._get_year_results()
+
+	def _get_year_details(self):
+		# Find table with details
+		details_table = self.soup.find('table', {'class': 'tablesorter notOddeven'})
+
+		# Parse table with details
+		if details_table:
+			rider_year_details = [s.strip() for s in details_table.text.replace('\n', '|').split('|') if s.strip()]
+			rider_year_details = [x.split(':') if ':' in x else ['UCI Points', x.split()[0].replace('.', '')] for x in rider_year_details]
+			rider_year_details = dict(rider_year_details)
+		else:
+			rider_year_details = {}
+
+		# Load attributes
+		self.year_details = {}
+		self.year_details['Team'] = rider_year_details['Team'].strip() if 'Team' in rider_year_details else None
+		self.year_details['Division'] = rider_year_details['Division'].strip() if 'Division' in rider_year_details else None
+		self.year_details['UCI Ranking'] = int(rider_year_details['UCI Ranking']) if 'UCI Ranking' in rider_year_details else None
+		self.year_details['UCI Points'] = int(rider_year_details['UCI Points']) if 'UCI Points' in rider_year_details and rider_year_details['UCI Points'].strip() else 0
+		self.year_details['UCI Wins'] = int(rider_year_details['UCI Wins'].replace('-', '0')) if 'UCI Wins' in rider_year_details and rider_year_details['UCI Wins'].strip() else 0
+		self.year_details['Race days'] = int(rider_year_details['Race days'].replace('-', '0')) if 'Race days'in rider_year_details and rider_year_details['Race days'].strip() else 0
+		self.year_details['Distance'] = int(rider_year_details['Distance'].split()[0].replace('.', '').replace('-', '0')) if 'Distance' in rider_year_details else 0
+
+	def _get_year_results(self):
+		# Find table with results
+		table = self.soup.find('table', {'class': "sortTabell tablesorter"})
+		self.results_df = parse_table(table)
