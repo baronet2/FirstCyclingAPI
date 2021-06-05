@@ -16,10 +16,6 @@ class FirstCyclingObject:
 	def __repr__(self):
 		return f"{self.__class__.__name__}({self.ID})"
 
-	def get_json(self):
-		""" Return JSON representation of object. """
-		return vars(self).copy()
-
 	def _get_response(self, **kwargs):
 		return "That endpoint is not supported."
 
