@@ -3,7 +3,7 @@ from .endpoints import RaceEndpoint, RaceVictoryTable, RaceStageVictories, RaceE
 from ..api import fc
 
 class Race(FirstCyclingObject):
-	default_endpoint = RaceEndpoint
+	_default_endpoint = RaceEndpoint
 
 	def _get_response(self, **kwargs):
 		return fc.get_race_endpoint(self.ID, **kwargs)
@@ -28,7 +28,7 @@ class Race(FirstCyclingObject):
 
 
 class RaceEdition(FirstCyclingObject):
-	default_endpoint = RaceEndpoint
+	_default_endpoint = RaceEndpoint
 	
 	def __init__(self, race_id, year):
 		super().__init__(race_id)

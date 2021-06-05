@@ -3,7 +3,7 @@ from .endpoints import RankingEndpoint
 from ..api import fc
 
 class Ranking(FirstCyclingObject):
-	default_endpoint = RankingEndpoint
+	_default_endpoint = RankingEndpoint
 
 	def __init__(self):
 		pass

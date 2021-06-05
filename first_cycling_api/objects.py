@@ -8,7 +8,7 @@ Provides base class for API objects.
 from .endpoints import Endpoint
 
 class FirstCyclingObject:
-	default_endpoint = Endpoint
+	_default_endpoint = Endpoint
 
 	def __init__(self, ID):
 		self.ID = ID

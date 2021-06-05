@@ -3,7 +3,7 @@ from .endpoints import RiderEndpoint, RiderYearResults
 from ..api import fc
 
 class Rider(FirstCyclingObject):
-	default_endpoint = RiderEndpoint
+	_default_endpoint = RiderEndpoint
 
 	def _get_response(self, **kwargs):
 		return fc.get_rider_endpoint(self.ID, **kwargs)
