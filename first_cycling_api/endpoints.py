@@ -5,6 +5,8 @@ Endpoints
 Provides classes for API objects.
 """
 
+import bs4
+
 class Endpoint:
 	def __init__(self, response):
 		self.response = response

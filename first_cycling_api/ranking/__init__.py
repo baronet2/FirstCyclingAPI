@@ -1,1 +1,1 @@
-from .ranking import get_ranking
+from .ranking import Ranking
