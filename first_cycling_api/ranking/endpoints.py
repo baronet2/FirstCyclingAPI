@@ -2,6 +2,14 @@ from ..endpoints import ParsedEndpoint
 from ..parser import parse_table
 
 class RankingEndpoint(ParsedEndpoint):
+	"""
+	Rakings page response. Extends Endpoint.
+
+	Attributes
+	----------
+	table : pd.DataFrame
+		Rankings table.
+	"""
 	def _parse_soup(self):
 		self._get_rankings_table()
 

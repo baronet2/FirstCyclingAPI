@@ -3,6 +3,15 @@ from .endpoints import RankingEndpoint
 from ..api import fc
 
 class Ranking(FirstCyclingObject):
+	"""
+	Object to retrieve rankings pages.
+
+	Examples
+	--------
+	>>> r = Ranking()
+	>>> r.ranking(h=1, rank=1, y='2021-21', page=5)
+	<first_cycling_api.ranking.endpoints.RankingEndpoint at 0x23adb3eed00>
+	"""
 	_default_endpoint = RankingEndpoint
 
 	def __init__(self):
@@ -46,6 +55,10 @@ class Ranking(FirstCyclingObject):
 		U23 : int
 			For FirstCycling Ranking and FirstCycling Amateur, if 1 include results for under-23 riders only.
 		nat : str
-			For FirstCycling Amateur, three-letter code for country, one of {'aus', bel', 'den', 'fra', 'ita', 'jpn', 'nor', 'esp', 'gbr', 'usa'}	.	
+			For FirstCycling Amateur, three-letter code for country, one of {'aus', bel', 'den', 'fra', 'ita', 'jpn', 'nor', 'esp', 'gbr', 'usa'}
+
+		Returns
+		-------
+		RankingEndpoint
 		"""
 		return self._get_endpoint(**kwargs)

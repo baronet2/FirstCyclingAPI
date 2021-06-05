@@ -3,6 +3,16 @@ from ..parser import parse_table
 
 
 class RaceEndpoint(ParsedEndpoint):
+	"""
+	Race page response. Extends Endpoint.
+
+	Attributes
+	----------
+	header_details : dict
+		Details from page header, including race name and external links.
+	editions : list[int]
+		A lsit of the years in which editions of the race took place.
+	"""
 
 	def _parse_soup(self):
 		self._get_header_details()
@@ -20,6 +30,15 @@ class RaceEndpoint(ParsedEndpoint):
 
 
 class RaceVictoryTable(RaceEndpoint):
+	"""
+	Race victory table response. Extends RaceEndpoint.
+
+	Attributes
+	----------
+	table : pd.DataFrame
+		Victory table for race.
+	"""
+
 	def _parse_soup(self):
 		super()._parse_soup()
 		self._get_victory_table()
@@ -30,6 +49,15 @@ class RaceVictoryTable(RaceEndpoint):
 
 
 class RaceStageVictories(RaceEndpoint):
+	"""
+	Race stage victory table response. Extends RaceEndpoint.
+
+	Attributes
+	----------
+	table : pd.DataFrame
+		Stage victory table for race.
+	"""
+
 	def _parse_soup(self):
 		super()._parse_soup()
 		self._get_stage_victory_table()
@@ -41,15 +69,16 @@ class RaceStageVictories(RaceEndpoint):
 
 class RaceEditionResults(RaceEndpoint):
 	"""
-	An endpoint for a race edition's results. Extends ParsedEndpoint.
+	Race edition results response. Extends RaceEndpoint.
 
 	Attributes
 	----------
 	results_table : pd.DataFrame
-		A DataFrame containing the victory table.
+		Table containing the race results.
 	standings : dict {str : pd.DataFrame}
 		For stage races, maps classification names to a DataFrame with the appropriate standings after the stage.
 	"""
+	
 	def _parse_soup(self):
 		super()._parse_soup()
 		self._get_results_table()

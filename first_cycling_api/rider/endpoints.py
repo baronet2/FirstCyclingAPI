@@ -4,14 +4,28 @@ from ..parser import parse_date, parse_table
 import pandas as pd
 import bs4
 
+
 class RiderEndpoint(ParsedEndpoint):
+	"""
+	Rider profile page response. Extends Endpoint.
+
+	Attributes
+	----------
+	years_active : list[int]
+		List of years in which rider was active.
+	header_details : dict
+		Details from page header, including race name and external links.
+	sidebar_details : dict
+		Details from right sidebar, including nation, date of birth, height, and more.
+	"""
+
 	def _parse_soup(self):
 		self._get_years_active()
 		self._get_header_details()
 		self._get_sidebar_details()
 
 	def _get_years_active(self):
-		return [int(o['value']) for o in self.soup.find('select').find_all('option') if o['value']]
+		self.years_active = [int(o['value']) for o in self.soup.find('select').find_all('option') if o['value']]
 
 	def _get_header_details(self):
 		self.header_details = {}
@@ -45,14 +59,14 @@ class RiderEndpoint(ParsedEndpoint):
 
 class RiderYearResults(RiderEndpoint):
 	"""
-	An endpoint for rider's results in a certain year. Extends ParsedEndpoint.
+	Rider's results in a certain year. Extends RiderEndpoint.
 
 	Attributes
 	----------
 	year_details : dict
-		The year-specific rider details from the page.
+		The year-specific rider details from the page, including the team, division, UCI points, and more.
 	results_df : pd.DataFrame
-		A DataFrame containing the rider's results from the year.
+		Table of rider's results from the year.
 	"""
 
 	def _parse_soup(self):
