@@ -1,6 +1,6 @@
 """
-Rider
-=====
+Riders
+======
 
 Access rider details, including results and statistics.
 

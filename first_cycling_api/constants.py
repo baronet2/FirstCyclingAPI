@@ -19,7 +19,16 @@ from enum import Enum
 
 classifications = {'general': 1, 'youth': 2, 'points': 3, 'mountain': 4, 'sprint': 6}
 Classification = Enum('Classification', classifications)
-""" Enum mapping classification names to numbers. """
+"""
+Enum mapping classification names to numbers.
+
+Examples
+========
+>>> Classification.general.value
+1
+>>> Classification(1).name
+'general'
+"""
 
 profile_icon_map = {'Bakketempo.png': 'Mountain ITT',
 			'Fjell-MF.png': 'Mountain MTF',
@@ -31,10 +40,28 @@ profile_icon_map = {'Bakketempo.png': 'Mountain ITT',
 			'Brosten.png': 'Cobbles',
 			'Lagtempo.png': 'TTT'} # TODO Any more?
 Profile = Enum('Profile', profile_icon_map)
-""" Enum mapping profile icon file names to profile types. """
+"""
+Enum mapping profile icon file names to profile types.
+
+Examples
+========
+>>> Profile['Flatt.png'].value
+'Flat'
+>>> Profile('Flat').name
+'Flatt.png'
+"""
 
 class Country(Enum):
-	""" Enum mapping three-letter country flag codes to country names. """
+	"""
+	Enum mapping three-letter country flag codes to country names.
+
+	Examples
+	========
+	>>> Country.SLO.value
+	'Slovenia'
+	>>> Country('Slovenia').name
+	'SLO'
+	"""
 	ALB = "Albania"
 	ALG = "Algeria"
 	AND = "Andorra"

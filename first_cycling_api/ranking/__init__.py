@@ -1,6 +1,6 @@
 """
-Ranking
-=======
+Rankings
+========
 
 Access race details, including statistics and results.
 
