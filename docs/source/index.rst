@@ -4,10 +4,9 @@
    :maxdepth: 2
    :caption: Contents:
 
-   first_cycling_api/rider
-   first_cycling_api/race
-   first_cycling_api/ranking
-   first_cycling_api/utilities
+   first_cycling_api/rider/rider
+   first_cycling_api/race/race
+   first_cycling_api/ranking/ranking
 
 Indices and tables
 ==================

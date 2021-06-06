@@ -4,7 +4,7 @@ from ..api import fc
 
 class Rider(FirstCyclingObject):
 	"""
-	Wrapper load information on riders.
+	Wrapper to load information on riders.
 
 	Attributes
 	----------

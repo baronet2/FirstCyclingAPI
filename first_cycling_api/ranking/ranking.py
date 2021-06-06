@@ -8,8 +8,7 @@ class Ranking(FirstCyclingObject):
 
 	Examples
 	--------
-	>>> r = Ranking()
-	>>> r.ranking(h=1, rank=1, y='2021-21', page=5)
+	>>> Ranking().ranking(h=1, rank=1, y=2020, page=2)
 	<first_cycling_api.ranking.endpoints.RankingEndpoint at 0x23adb3eed00>
 	"""
 	_default_endpoint = RankingEndpoint
