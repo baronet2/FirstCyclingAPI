@@ -1,30 +1,18 @@
-from ..objects import FirstCyclingObject
 from .endpoints import RankingEndpoint
 from ..api import fc
 
-class Ranking(FirstCyclingObject):
+class Ranking:
 	"""
 	Object to retrieve rankings pages.
 
 	Examples
 	--------
-	>>> Ranking().ranking(h=1, rank=1, y=2020, page=2)
-	<first_cycling_api.ranking.endpoints.RankingEndpoint at 0x23adb3eed00>
+	>>> Ranking(h=1, rank=1, y=2020, page=2)
+	<first_cycling_api.ranking.endpoints.RankingEndpoint at 0x295caddccd0>
 	"""
-	_default_endpoint = RankingEndpoint
-
-	def __init__(self):
-		pass
-
-	def __repr__(self):
-		return f"{self.__class__.__name__}()"
-
-	def _get_response(self, **kwargs):
-		return fc.get_ranking_endpoint(**kwargs)
-
-	def ranking(self, **kwargs):
+	def __new__(cls, **kwargs):
 		"""
-		Initialize a Ranking endpoint.
+		Obtain a ranking endpoint.
 
 		Parameters
 		----------
@@ -60,4 +48,4 @@ class Ranking(FirstCyclingObject):
 		-------
 		RankingEndpoint
 		"""
-		return self._get_endpoint(**kwargs)
+		return RankingEndpoint(fc.get_ranking_endpoint(**kwargs))

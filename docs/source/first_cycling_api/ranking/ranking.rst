@@ -1,7 +1,8 @@
 .. automodule:: first_cycling_api.ranking
 
-.. autoclass:: first_cycling_api.ranking.Ranking
+.. automodule:: first_cycling_api.ranking.ranking
 	:members:
+	:special-members:
 
-.. autoclass:: first_cycling_api.ranking.endpoints
+.. automodule:: first_cycling_api.ranking.endpoints
 	:members:

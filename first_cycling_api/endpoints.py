@@ -12,13 +12,24 @@ import datetime
 
 
 class Endpoint:
+	"""
+	Generalized class to store endpoint responses.
+
+	Attributes
+	----------
+	response : bytes
+		Raw response from firstcycling.com
+	"""
+
 	def __init__(self, response):
 		self.response = response
+		""" Raw response from firstcycling.com. """
 
 	def _to_json(self):
 		return vars(self).copy()
 
 	def get_json(self):
+		""" Get JSON representation of endpoint response. """
 		return json.dumps(self, default=ComplexHandler)
 
 

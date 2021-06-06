@@ -3,7 +3,7 @@ from ..parser import parse_table
 
 class RankingEndpoint(ParsedEndpoint):
 	"""
-	Rakings page response. Extends Endpoint.
+	Rakings page response.
 
 	Attributes
 	----------
