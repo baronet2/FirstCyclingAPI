@@ -1,5 +1,14 @@
 .. automodule:: first_cycling_api
 
+.. automodule:: first_cycling_api.rider
+	:noindex:
+
+.. automodule:: first_cycling_api.race
+	:noindex:
+
+.. automodule:: first_cycling_api.ranking
+	:noindex:
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

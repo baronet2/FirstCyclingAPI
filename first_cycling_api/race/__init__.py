@@ -3,8 +3,6 @@ Races
 =====
 
 Access race details, including results, statistics, startlists, and more.
-`Race` and `RaceEdition` provide methods to load these responses into endpoint classes.
-Some endpoints are automatically parsed (e.g. results are loaded into a pandas DataFrame).
 
 Examples
 --------

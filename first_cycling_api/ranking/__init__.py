@@ -4,8 +4,6 @@ Ranking
 
 Access race details, including statistics and results.
 
-Initialize a `Ranking` instance and load ranking endpoints using its `ranking()` method.
-
 
 Examples
 --------
