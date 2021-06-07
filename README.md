@@ -1,61 +1,63 @@
 # First Cycling API
 
-An unofficial Python API client to obtain data from https://firstcycling.com/.
+An unofficial Python API wrapper for https://firstcycling.com/.
 
 ## Usage
 
-There are two main ways to interact with the API: using objects or using endpoints.
+The API wrapper currently supports the following endpoints:
 
-### Using Objects
-The API provides classes to store data on riders and races using the `Rider` and `Race` class respectively. Objects of these classes have various methods to access associated endpoints and store the results. Some endpoints are already parsed automatically by the API.
+- Race pages
+- Rider pages
+- Rankings pages
 
-For example, a rider's results for a certain year can be loaded into a `pandas.DataFrame` as follows:
+A few examples are shown below.
 
+For full documentation, see https://firstcyclingapi.readthedocs.io/en/latest/.
+
+**Race Results:**
 ```python
-from first_cycling_api import Rider
-r = Rider(65025) # Use the FirstCycling ID for the rider (found in the rider's profile page URL)
-r.get_year(2020)
-print(r.results[2020].results_df)
+>>> from first_cycling_api import RaceEdition
+>>> amstel_2019 = RaceEdition(race_id=9, year=2019) # The race_id comes from the race page URL
+>>> amstel_2019.results().results_table.head() # A pandas DataFrame of the race results
 ```
 
-The results for a certain edition of a race can be obtained as a `pandas.DataFrame` as follows:
+|    |   Pos | Rider                 | Team                    | Time    |   UCI |   Rider_ID | Rider_Country   |   Team_ID | Team_Country   |
+|---:|------:|:----------------------|:------------------------|:--------|------:|-----------:|:----------------|----------:|:---------------|
+|  0 |    01 | Mathieu van der Poel  | Corendon - Circus       | 6:28:18 |   500 |      16672 | NED             |     13279 | BEL            |
+|  1 |    02 | Simon Clarke          | EF Education First      | + 00    |   400 |        568 | AUS             |     13208 | USA            |
+|  2 |    03 | Jakob Fuglsang        | Astana Pro Team         | + 00    |   325 |        264 | DEN             |     13198 | KAZ            |
+|  3 |    04 | Julian Alaphilippe    | Deceuninck - Quick Step | + 00    |   275 |      12474 | FRA             |     13206 | BEL            |
+|  4 |    05 | Maximilian Schachmann | Bora - Hansgrohe        | + 00    |   225 |      16643 | GER             |     13200 | GER            |
 
+**Rider Results:**
 ```python
-from first_cycling_api import Race
-r = Race(9)  # Use the FirstCycling ID for the race (found in the race page URL)
-r.get_edition_results(2019)
-print(r.editions[2019].results.results_table)
+>>> from first_cycling_api import Rider
+>>> roglic = Rider(18655) # The rider ID comes from the rider page URL
+>>> roglic.year_results(2020).results_df.head() # A pandas DataFrame of Roglic's 2020 results
 ```
 
-Objects can be exported in JSON format by using the `r.get_json()` method.
+|    |   Date |   Pos |   GC | Race                          | CAT   |   UCI | Icon           |   Race_ID | Race_Country   |
+|---:|-------:|------:|-----:|:------------------------------|:------|------:|:---------------|----------:|:---------------|
+|  0 |    811 |     1 |  nan | Vuelta a España               | GT2   |   850 | red.png        |        23 | ESP            |
+|  1 |    811 |     1 |  nan | Vuelta a España | Points      | GT2   |       | green.png      |        23 | ESP            |
+|  2 |    811 |     6 |  nan | Vuelta a España | Mountain    | GT2   |       | maillotmon.png |        23 | ESP            |
+|  3 |    410 |     1 |  nan | Liege-Bastogne-Liege          | 1.WT1 |   500 | Smaakupert.png |        11 | BEL            |
+|  4 |   2709 |     6 |  nan | World Championship RR | Imola | WCRR  |   225 |                |        26 | UCI            |
 
-The following endpoint pages are currently parsed by the API:
-
-- Rider results page for a year (e.g. https://firstcycling.com/rider.php?r=18258&y=2020)
-- Results for a race edition (e.g. https://firstcycling.com/race.php?r=15&y=2019&e=04)
-- Ranking pages (e.g. https://firstcycling.com/ranking.php?k=fc&rank=wel&y=2020&U23=1)
-- Victory table statistics for races (e.g. https://firstcycling.com/race.php?r=9&k=W)
-
-### Using Endpoints
-Endpoints can be initialized with various parameters and return the HTML from the appropriate page in the `.response` attribute. The HTML can then be parsed using a package such as `bs4`. For some endpoints, the API also automatically parses the information and stores it in a convenient format.
-
-For example, rankings pages can be loaded using the `Ranking` endpoint. The rankings table from the page is stores as a `pandas.DataFrame` in the `.table` attribute.
-
+**Rankings Pages:**
 ```python
-from first_cycling_api import Ranking
-r = Ranking(rank=1, y=2020)
-print(r.table)
+>>> from first_cycling_api import Ranking
+>>> ranking = Ranking(h=1, rank=1, y=2020, page=2) # Parameters from corresponding URL
+>>> ranking.table.head() # A pandas DataFrame of the rankings table
 ```
 
-The following endpoint pages are currently mapped by the API:
-
-- Rider pages (starting with https://firstcycling.com/rider.php?r=)
-- Race pages (starting with https://firstcycling.com/race.php?r=)
-- Ranking pages (starting with https://firstcycling.com/ranking.php?)
-
-### ReadTheDocs
-
-See the full documentation at https://firstcyclingapi.readthedocs.io/en/latest/.
+|    |   Pos | Rider         | Nation      | Team                  |   Points |   Rider_ID |   Team_ID | Team_Country   |
+|---:|------:|:--------------|:------------|:----------------------|---------:|-----------:|----------:|:---------------|
+|  0 |   101 | Egan Bernal   | Colombia    | INEOS Grenadiers      |      426 |      58275 |     17536 | GBR            |
+|  1 |   102 | Bauke Mollema | Netherlands | Trek-Segafredo        |      420 |        581 |     17540 | USA            |
+|  2 |   103 | Tim Declercq  | Belgium     | Deceuninck-Quick Step |      415 |       1970 |     17529 | BEL            |
+|  3 |   104 | Oliver Naesen | Belgium     | AG2R La Mondiale      |      411 |      22682 |     17524 | FRA            |
+|  4 |   105 | Alex Aranburu | Spain       | Astana Pro Team       |      410 |      27307 |     17525 | KAZ            |
 
 ## Contributing
 Contributions are welcome! Please feel free to open issues, pull requests, and/or discussions.

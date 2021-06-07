@@ -1,3 +1,4 @@
 *.ipynb
 __pycache__/
 fcapi/
+docs/build/
