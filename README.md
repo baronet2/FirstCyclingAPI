@@ -38,13 +38,13 @@ For full documentation, see https://firstcyclingapi.readthedocs.io/en/latest/.
 >>> roglic.year_results(2020).results_df.head() # A pandas DataFrame of Roglic's 2020 results
 ```
 
-|    |   Date |   Pos |   GC | Race                          | CAT   |   UCI | Icon           |   Race_ID | Race_Country   |
-|---:|-------:|------:|-----:|:------------------------------|:------|------:|:---------------|----------:|:---------------|
-|  0 |    811 |     1 |  nan | Vuelta a España               | GT2   |   850 | red.png        |        23 | ESP            |
-|  1 |    811 |     1 |  nan | Vuelta a España | Points      | GT2   |       | green.png      |        23 | ESP            |
-|  2 |    811 |     6 |  nan | Vuelta a España | Mountain    | GT2   |       | maillotmon.png |        23 | ESP            |
-|  3 |    410 |     1 |  nan | Liege-Bastogne-Liege          | 1.WT1 |   500 | Smaakupert.png |        11 | BEL            |
-|  4 |   2709 |     6 |  nan | World Championship RR | Imola | WCRR  |   225 |                |        26 | UCI            |
+|    |   Date |   Pos |   GC | Race                           | CAT   |   UCI | Icon           |   Race_ID | Race_Country   |
+|---:|-------:|------:|-----:|:-------------------------------|:------|------:|:---------------|----------:|:---------------|
+|  0 |    811 |     1 |  nan | Vuelta a España                | GT2   |   850 | red.png        |        23 | ESP            |
+|  1 |    811 |     1 |  nan | Vuelta a España \| Points      | GT2   |       | green.png      |        23 | ESP            |
+|  2 |    811 |     6 |  nan | Vuelta a España \| Mountain    | GT2   |       | maillotmon.png |        23 | ESP            |
+|  3 |    410 |     1 |  nan | Liege-Bastogne-Liege           | 1.WT1 |   500 | Smaakupert.png |        11 | BEL            |
+|  4 |   2709 |     6 |  nan | World Championship RR \| Imola | WCRR  |   225 |                |        26 | UCI            |
 
 **Rankings Pages:**
 ```python
