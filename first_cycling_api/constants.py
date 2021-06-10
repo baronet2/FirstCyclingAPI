@@ -38,6 +38,7 @@ profile_icon_map = {'Bakketempo.png': 'Mountain ITT',
 			'Smaakupert.png': 'Hilly',
 			'Tempo.png': 'Flat ITT',
 			'Brosten.png': 'Cobbles',
+			'Ukjent.png': 'Unknown', # e.g. 2021 Vuelta stage 4 - flat with hilltop finish
 			'Lagtempo.png': 'TTT'} # TODO Any more?
 Profile = Enum('Profile', profile_icon_map)
 """
