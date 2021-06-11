@@ -58,10 +58,18 @@ def parse_table(table):
 	import pandas as pd
 
 	# Load pandas DataFrame from raw text only
-	out_df = pd.read_html(str(table), thousands='.')[0]
+	out_df = pd.read_html(str(table), decimal=',')[0]
 
 	if out_df.iat[0, 0] == 'No data': # No data
 		return None
+
+	# Convert decimal points to thousands separator
+	# NOTE: Cannot use thousands='.' in pd.read_html because will ruin other columns (e.g. CAT for races)
+	thousands_cols = ['Points']
+	for col in thousands_cols:
+		if col in out_df:
+			print(out_df[col].head())
+			out_df[col] = out_df[col].astype(str).str.replace('.', '', regex=False).astype(int) 
 
 	# Parse soup to add information hidden in tags/links
 	headers = [th.text for th in table.tr.find_all('th')]

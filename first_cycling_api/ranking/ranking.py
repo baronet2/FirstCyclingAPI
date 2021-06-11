@@ -42,7 +42,8 @@ class Ranking:
 		U23 : int
 			For FirstCycling Ranking and FirstCycling Amateur, if 1 include results for under-23 riders only.
 		nat : str
-			For FirstCycling Amateur, three-letter code for country, one of {'aus', bel', 'den', 'fra', 'ita', 'jpn', 'nor', 'esp', 'gbr', 'usa'}
+			For FirstCycling Amateur, three-letter code for country, one of {'aus', bel', 'den', 'fra', 'ita', 'jpn', 'nor', 'esp', 'gbr', 'usa'}.
+			If women's amateur ranking is desired, add a 'w' to the country code, yielding one of {'denw', 'norw'}.
 
 		Returns
 		-------
