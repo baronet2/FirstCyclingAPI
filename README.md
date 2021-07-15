@@ -4,6 +4,8 @@
 
 An unofficial Python API wrapper for https://firstcycling.com/.
 
+Note: As of July 15, 2021, firstcycling.com has updated their website so certain endpoints may not be working.
+
 ## Usage
 
 The API wrapper currently supports the following endpoints:
