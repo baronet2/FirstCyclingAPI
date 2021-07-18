@@ -26,16 +26,16 @@ def get_url_parameters(url): # Adapted from https://stackoverflow.com/questions/
 	return dict(url_parse.parse_qsl(url_parse.urlsplit(url).query))
 
 def rider_link_to_id(a):
-	return get_url_parameters(a['href'])['r']
+	return int(get_url_parameters(a['href'])['r'])
 
 def team_link_to_id(a):
-	return get_url_parameters(a['href'])['l']
+	return int(get_url_parameters(a['href'])['l'])
 
 def race_link_to_race_id(a):
-	return get_url_parameters(a['href'])['r']
+	return int(get_url_parameters(a['href'])['r'])
 
 def race_link_to_stage_num(a):
-	return get_url_parameters(a['href'])['e']
+	return int(get_url_parameters(a['href'])['e'])
 
 # Parsing icons ----
 
