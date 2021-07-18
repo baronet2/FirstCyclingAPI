@@ -4,8 +4,6 @@
 
 An unofficial Python API wrapper for https://firstcycling.com/.
 
-Note: As of July 15, 2021, firstcycling.com has updated their website so certain endpoints may not be working.
-
 ## Usage
 
 The API wrapper currently supports the following endpoints:
@@ -67,7 +65,7 @@ For full documentation, see https://firstcyclingapi.readthedocs.io/en/latest/.
 Contributions are welcome! Please feel free to open issues, pull requests, and/or discussions.
 
 Especially, there is room to help with:
-- Mapping additional endpoints (e.g. pages starting with https://firstcycling.com/team.php?, or https://firstcycling.com/race.php?y=)
+- Mapping additional endpoints (e.g. pages starting with https://firstcycling.com/team.php?)
 - Parsing results from additional pages (e.g. race startlists, race statistics)
 
 ## License
