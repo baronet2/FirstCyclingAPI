@@ -71,7 +71,6 @@ def parse_table(table):
 	thousands_cols = ['Points']
 	for col in thousands_cols:
 		if col in out_df:
-			print(out_df[col].head())
 			out_df[col] = out_df[col].astype(str).str.replace('.', '', regex=False).astype(int) 
 
 	# Parse soup to add information hidden in tags/links
