@@ -77,17 +77,25 @@ class RiderYearResults(RiderEndpoint):
 	def _get_year_details(self):
 		# Find table with details
 		details_table = self.soup.find('table', {'class': 'tablesorter notOddEven'})
-		team_details, uci_ranking, wins, racedays, distance, _ = tuple(details_table.find_all('span'))
+
+		spans = details_table.find_all('span')
 
 		self.year_details = {}
-		self.year_details['Team'] = team_details.text.split('(')[0].strip()
-		self.year_details['Team ID'] = team_link_to_id(team_details.a)
-		self.year_details['Team Country'] = img_to_country_code(team_details.img)
-		self.year_details['Division'] = team_details.text.split('(')[1].split(')')[0]
-		self.year_details['UCI Ranking'] = int(uci_ranking.text.split(': ')[1])
-		self.year_details['UCI Wins'] = int(wins.text.split(': ')[1])
-		self.year_details['Racedays'] = int(racedays.text.split(': ')[1])
-		self.year_details['Distance'] = int(distance.text.split(': ')[1].replace('.', '').split('km')[0])
+		for span in spans:
+			if span.img: # Team details
+				self.year_details['Team'] = span.text.split('(')[0].strip()
+				self.year_details['Team ID'] = team_link_to_id(span.a)
+				self.year_details['Team Country'] = img_to_country_code(span.img)
+				self.year_details['Division'] = span.text.split('(')[1].split(')')[0]
+			elif 'Ranking' in span.text:
+				self.year_details['UCI Ranking'] = int(span.text.split(': ')[1])
+			elif 'Wins' in span.text:
+				self.year_details['UCI Wins'] = int(span.text.split(': ')[1])
+			elif 'Racedays' in span.text:
+				self.year_details['Race days'] = int(span.text.split(': ')[1])
+			elif 'Distance' in span.text:
+				self.year_details['Distance'] = int(span.text.split(': ')[1].replace('.', '').split('km')[0])
+		
 
 	def _get_year_results(self):
 		# Find table with results
