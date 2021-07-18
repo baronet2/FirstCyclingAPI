@@ -25,8 +25,8 @@ class RiderEndpoint(ParsedEndpoint):
 		self._get_sidebar_details()
 
 	def _get_years_active(self):
-		self.years_active = [int(o['value']) for o in self.soup.find('select').find_all('option') if o['value']]
-
+		self.years_active = [int(a.text) for a in self.soup.find('p', {'class': "sidemeny2"}).find_all('a')]
+		
 	def _get_header_details(self):
 		self.header_details = {}
 		self.header_details['current_team'] = self.soup.p.text.strip() if self.soup.p.text.strip() else None
