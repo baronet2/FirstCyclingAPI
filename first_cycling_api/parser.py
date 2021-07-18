@@ -37,6 +37,9 @@ def race_link_to_race_id(a):
 def race_link_to_stage_num(a):
 	return int(get_url_parameters(a['href'])['e'])
 
+def link_to_twitter_handle(a):
+	return a['href'].split('/')[3]
+
 # Parsing icons ----
 
 def get_img_name(img):

@@ -1,5 +1,5 @@
 from ..endpoints import ParsedEndpoint
-from ..parser import parse_date, parse_table, team_link_to_id, img_to_country_code
+from ..parser import parse_date, parse_table, team_link_to_id, img_to_country_code, link_to_twitter_handle
 
 import pandas as pd
 import bs4
@@ -30,7 +30,7 @@ class RiderEndpoint(ParsedEndpoint):
 	def _get_header_details(self):
 		self.header_details = {}
 		self.header_details['current_team'] = self.soup.p.text.strip() if self.soup.p.text.strip() else None
-		self.header_details['twitter_handle'] = self.soup.find('p', {'class': 'left'}).a['href'].split('/')[3] if self.soup.find('p', {'class': 'left'}).a else None
+		self.header_details['twitter_handle'] = link_to_twitter_handle(self.soup.find('p', {'class': 'left'}).a) if self.soup.find('p', {'class': 'left'}) and self.soup.find('p', {'class': 'left'}).a else None
 	
 	def _get_sidebar_details(self):
 		# Find table with rider details on right sidebar
