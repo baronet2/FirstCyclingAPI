@@ -26,7 +26,7 @@ class RiderEndpoint(ParsedEndpoint):
 
 	def _get_years_active(self):
 		self.years_active = [int(a.text) for a in self.soup.find('p', {'class': "sidemeny2"}).find_all('a')]
-		
+
 	def _get_header_details(self):
 		self.header_details = {}
 		self.header_details['current_team'] = self.soup.p.text.strip() if self.soup.p.text.strip() else None
@@ -34,9 +34,9 @@ class RiderEndpoint(ParsedEndpoint):
 	
 	def _get_sidebar_details(self):
 		# Find table with rider details on right sidebar
-		details_table = self.soup.find('table', {'class': 'tablesorter notOddEven'})
+		details_table = self.soup.find('table', {'class': 'tablesorter'})
 		details_df = pd.read_html(str(details_table))[0]
-		details = pd.Series(details_df.set_index(0)[1])
+		details = pd.Series(details_df.set_index('Information')['Information.1'])
 		
 		# Load details from table into attributes
 		self.sidebar_details = {}
