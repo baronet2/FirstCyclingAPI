@@ -15,7 +15,6 @@ UCI                             500.0
 Rider_ID                        16672
 Rider_Country                     NED
 Team_ID                         13279
-Team_Country                      BEL
 Name: 0, dtype: object
 
 """
