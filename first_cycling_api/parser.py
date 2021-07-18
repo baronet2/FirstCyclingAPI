@@ -26,16 +26,19 @@ def get_url_parameters(url): # Adapted from https://stackoverflow.com/questions/
 	return dict(url_parse.parse_qsl(url_parse.urlsplit(url).query))
 
 def rider_link_to_id(a):
-	return get_url_parameters(a['href'])['r']
+	return int(get_url_parameters(a['href'])['r'])
 
 def team_link_to_id(a):
-	return get_url_parameters(a['href'])['l']
+	return int(get_url_parameters(a['href'])['l'])
 
 def race_link_to_race_id(a):
-	return get_url_parameters(a['href'])['r']
+	return int(get_url_parameters(a['href'])['r'])
 
 def race_link_to_stage_num(a):
-	return get_url_parameters(a['href'])['e']
+	return int(get_url_parameters(a['href'])['e'])
+
+def link_to_twitter_handle(a):
+	return a['href'].split('/')[3]
 
 # Parsing icons ----
 
@@ -68,7 +71,6 @@ def parse_table(table):
 	thousands_cols = ['Points']
 	for col in thousands_cols:
 		if col in out_df:
-			print(out_df[col].head())
 			out_df[col] = out_df[col].astype(str).str.replace('.', '', regex=False).astype(int) 
 
 	# Parse soup to add information hidden in tags/links

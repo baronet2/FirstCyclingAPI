@@ -1,5 +1,5 @@
 from ..endpoints import ParsedEndpoint
-from ..parser import parse_date, parse_table
+from ..parser import parse_date, parse_table, team_link_to_id, img_to_country_code, link_to_twitter_handle
 
 import pandas as pd
 import bs4
@@ -25,18 +25,18 @@ class RiderEndpoint(ParsedEndpoint):
 		self._get_sidebar_details()
 
 	def _get_years_active(self):
-		self.years_active = [int(o['value']) for o in self.soup.find('select').find_all('option') if o['value']]
+		self.years_active = [int(a.text) for a in self.soup.find('p', {'class': "sidemeny2"}).find_all('a')]
 
 	def _get_header_details(self):
 		self.header_details = {}
 		self.header_details['current_team'] = self.soup.p.text.strip() if self.soup.p.text.strip() else None
-		self.header_details['twitter_handle'] = self.soup.find('p', {'class': 'left'}).a['href'].split('/')[3] if self.soup.find('p', {'class': 'left'}).a else None
+		self.header_details['twitter_handle'] = link_to_twitter_handle(self.soup.find('p', {'class': 'left'}).a) if self.soup.find('p', {'class': 'left'}) and self.soup.find('p', {'class': 'left'}).a else None
 	
 	def _get_sidebar_details(self):
 		# Find table with rider details on right sidebar
-		details_table = self.soup.find('table', {'class': 'tablesorter notOddEven'})
+		details_table = self.soup.find('table', {'class': 'tablesorter'})
 		details_df = pd.read_html(str(details_table))[0]
-		details = pd.Series(details_df.set_index(0)[1])
+		details = pd.Series(details_df.set_index('Information')['Information.1'])
 		
 		# Load details from table into attributes
 		self.sidebar_details = {}
@@ -76,25 +76,26 @@ class RiderYearResults(RiderEndpoint):
 
 	def _get_year_details(self):
 		# Find table with details
-		details_table = self.soup.find('table', {'class': 'tablesorter notOddeven'})
+		details_table = self.soup.find('table', {'class': 'tablesorter notOddEven'})
 
-		# Parse table with details
-		if details_table:
-			rider_year_details = [s.strip() for s in details_table.text.replace('\n', '|').split('|') if s.strip()]
-			rider_year_details = [x.split(':') if ':' in x else ['UCI Points', x.split()[0].replace('.', '')] for x in rider_year_details]
-			rider_year_details = dict(rider_year_details)
-		else:
-			rider_year_details = {}
+		spans = details_table.find_all('span')
 
-		# Load attributes
 		self.year_details = {}
-		self.year_details['Team'] = rider_year_details['Team'].strip() if 'Team' in rider_year_details else None
-		self.year_details['Division'] = rider_year_details['Division'].strip() if 'Division' in rider_year_details else None
-		self.year_details['UCI Ranking'] = int(rider_year_details['UCI Ranking']) if 'UCI Ranking' in rider_year_details else None
-		self.year_details['UCI Points'] = int(rider_year_details['UCI Points']) if 'UCI Points' in rider_year_details and rider_year_details['UCI Points'].strip() else 0
-		self.year_details['UCI Wins'] = int(rider_year_details['UCI Wins'].replace('-', '0')) if 'UCI Wins' in rider_year_details and rider_year_details['UCI Wins'].strip() else 0
-		self.year_details['Race days'] = int(rider_year_details['Race days'].replace('-', '0')) if 'Race days'in rider_year_details and rider_year_details['Race days'].strip() else 0
-		self.year_details['Distance'] = int(rider_year_details['Distance'].split()[0].replace('.', '').replace('-', '0')) if 'Distance' in rider_year_details else 0
+		for span in spans:
+			if span.img: # Team details
+				self.year_details['Team'] = span.text.split('(')[0].strip()
+				self.year_details['Team ID'] = team_link_to_id(span.a)
+				self.year_details['Team Country'] = img_to_country_code(span.img)
+				self.year_details['Division'] = span.text.split('(')[1].split(')')[0]
+			elif 'Ranking' in span.text:
+				self.year_details['UCI Ranking'] = int(span.text.split(': ')[1])
+			elif 'Wins' in span.text:
+				self.year_details['UCI Wins'] = int(span.text.split(': ')[1])
+			elif 'Racedays' in span.text:
+				self.year_details['Race days'] = int(span.text.split(': ')[1])
+			elif 'Distance' in span.text:
+				self.year_details['Distance'] = int(span.text.split(': ')[1].replace('.', '').split('km')[0])
+		
 
 	def _get_year_results(self):
 		# Find table with results
