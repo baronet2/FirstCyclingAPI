@@ -14,7 +14,7 @@ class RiderEndpoint(ParsedEndpoint):
 	years_active : list[int]
 		List of years in which rider was active.
 	header_details : dict
-		Details from page header, including race name and external links.
+		Details from page header, including rider name and external links.
 	sidebar_details : dict
 		Details from right sidebar, including nation, date of birth, height, and more.
 	"""
