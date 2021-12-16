@@ -68,5 +68,7 @@ Especially, there is room to help with:
 - Mapping additional endpoints (e.g. pages starting with https://firstcycling.com/team.php?)
 - Parsing results from additional pages (e.g. race startlists, race statistics)
 
+To run tests, first `pip install pytest` and `pip install vcrpy`. Then run `py.test` in a shell from the root directory.
+
 ## License
 See the file called LICENSE. This project is not affiliated in any way with firstcycling.com.
