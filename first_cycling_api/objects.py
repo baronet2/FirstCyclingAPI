@@ -20,6 +20,6 @@ class FirstCyclingObject:
 		return "That endpoint is not supported."
 
 	def _get_endpoint(self, endpoint=None, **kwargs):
-		endpoint = endpoint if endpoint else self.default_endpoint
+		endpoint = endpoint if endpoint else self._default_endpoint
 		response = self._get_response(**kwargs)
 		return endpoint(response)
