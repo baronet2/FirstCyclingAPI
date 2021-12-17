@@ -25,7 +25,12 @@ class RiderEndpoint(ParsedEndpoint):
 		self._get_sidebar_details()
 
 	def _get_years_active(self):
-		self.years_active = [int(a.text) for a in self.soup.find('p', {'class': "sidemeny2"}).find_all('a')]
+		# TODO make this more robust, fails when too many active years (e.g. Anna Van Der Breggen)
+		try:
+			self.years_active = [int(a.text) for a in self.soup.find('p', {'class': "sidemeny2"}).find_all('a')]
+		except ValueError:
+			print("Warning: could not collect rider's years active.")
+			self.years_active = []
 
 	def _get_header_details(self):
 		self.header_details = {}
