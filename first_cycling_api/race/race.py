@@ -136,7 +136,9 @@ class RaceEdition(FirstCyclingObject):
 		-------
 		RaceEditionResults
 		"""
-		return self._get_endpoint(endpoint=RaceEditionResults, l=classification_num, e=stage_num)
+		zero_padded_stage_num = f'{stage_num:02}' if isinstance(stage_num, int) else None
+		return self._get_endpoint(endpoint=RaceEditionResults, l=classification_num, e=zero_padded_stage_num)
+
 
 	def stage_profiles(self):
 		"""

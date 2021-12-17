@@ -1,0 +1,107 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - PHPSESSID=0iit4o9j5ehi6qfgnjdt0lj8jd
+      User-Agent:
+      - python-requests/2.25.1
+    method: GET
+    uri: https://firstcycling.com/ranking.php?k=nat&nat=fra&y=2016&race=1
+  response:
+    body:
+      string: !!binary |
+        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
+        71ffURsvAAA=
+    headers:
+      cache-control:
+      - no-store, no-cache, must-revalidate
+      content-encoding:
+      - gzip
+      content-length:
+      - '3542'
+      content-type:
+      - text/html; charset=UTF-8
+      date:
+      - Thu, 22 Jul 2021 20:33:04 GMT
+      expires:
+      - Thu, 19 Nov 1981 08:52:00 GMT
+      pragma:
+      - no-cache
+      server:
+      - Apache/2.4.38 (Debian)
+      strict-transport-security:
+      - max-age=31540000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

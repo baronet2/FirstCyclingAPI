@@ -58,6 +58,7 @@ def img_to_profile(img):
 
 def parse_table(table):
 	""" Convert HTML table from bs4 to pandas DataFrame. Return None if no data. """
+	# TODO for rider results, format dates nicely with hidden column we are throwing away
 	import pandas as pd
 
 	# Load pandas DataFrame from raw text only
@@ -71,11 +72,16 @@ def parse_table(table):
 	thousands_cols = ['Points']
 	for col in thousands_cols:
 		if col in out_df:
-			out_df[col] = out_df[col].astype(str).str.replace('.', '', regex=False).astype(int) 
+			out_df[col] = out_df[col].astype(str).str.replace('.', '', regex=False).astype(int)
 
 	# Parse soup to add information hidden in tags/links
 	headers = [th.text for th in table.tr.find_all('th')]
 	trs = table.find_all('tr')[1:]
+
+	if 'Race.1' in out_df:
+		out_df = out_df.rename(columns={'Race': 'Race_Country', 'Race.1': 'Race'})
+		headers.insert(headers.index('Race'), 'Race_Country')
+
 	soup_df = pd.DataFrame([tr.find_all('td') for tr in trs], columns=headers)
 
 	# Add information hidden in tags
@@ -93,6 +99,8 @@ def parse_table(table):
 
 		elif col == 'Race':
 			out_df['Race_ID'] = series.apply(lambda td: get_url_parameters(td.a['href'])['r'] if td.a else None)
+			
+		elif col == 'Race_Country':
 			out_df['Race_Country'] = series.apply(lambda td: img_to_country_code(td.img) if td.img else None)
 
 		elif col == '':
@@ -102,4 +110,7 @@ def parse_table(table):
 				pass
 
 	out_df = out_df.replace({'-': None}).dropna(how='all', axis=1)
+
+	# TODO Remove Unnamed columns
+	
 	return out_df
