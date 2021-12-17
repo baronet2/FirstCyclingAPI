@@ -1,6 +1,7 @@
 # First Cycling API
 [![Documentation Status](https://readthedocs.org/projects/firstcyclingapi/badge/?version=latest)](https://firstcyclingapi.readthedocs.io/en/latest/?badge=latest)
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
+[![GitHub Repo stars](https://img.shields.io/github/stars/baronet2/FirstCyclingAPI)](https://github.com/baronet2/FirstCyclingAPI/stargazers)
 
 An unofficial Python API wrapper for https://firstcycling.com/.
 
