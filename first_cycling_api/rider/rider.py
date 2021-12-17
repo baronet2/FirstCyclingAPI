@@ -46,6 +46,13 @@ class Rider(FirstCyclingObject):
 		"""
 		Get the rider's victories.
 
+		Parameters
+		----------
+		world_tour : bool
+			True if only World Tour wins wanted
+		uci : bool
+			True if only UCI wins wanted
+
 		Returns
 		-------
 		RiderEndpoint
