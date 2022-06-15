@@ -8,7 +8,7 @@ Examples
 --------
 >>> RaceEdition(race_id=9, year=2019).results().results_table.iloc[0]
 Pos                                01
-Rider            Mathieu van der Poel
+Rider            van der Poel Mathieu
 Team                Corendon - Circus
 Time                          6:28:18
 UCI                             500.0
