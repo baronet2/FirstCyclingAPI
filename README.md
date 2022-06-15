@@ -26,11 +26,11 @@ For full documentation, see https://firstcyclingapi.readthedocs.io/en/latest/.
 
 |    |   Pos | Rider                 | Team                    | Time    |   UCI |   Rider_ID | Rider_Country   |   Team_ID |
 |---:|------:|:----------------------|:------------------------|:--------|------:|-----------:|:----------------|----------:|
-|  0 |    01 | Mathieu van der Poel  | Corendon - Circus       | 6:28:18 |   500 |      16672 | NED             |     13279 |
-|  1 |    02 | Simon Clarke          | EF Education First      | + 00    |   400 |        568 | AUS             |     13208 |
-|  2 |    03 | Jakob Fuglsang        | Astana Pro Team         | + 00    |   325 |        264 | DEN             |     13198 |
-|  3 |    04 | Julian Alaphilippe    | Deceuninck - Quick Step | + 00    |   275 |      12474 | FRA             |     13206 |
-|  4 |    05 | Maximilian Schachmann | Bora - Hansgrohe        | + 00    |   225 |      16643 | GER             |     13200 |
+|  0 |    01 | van der Poel Mathieu  | Corendon - Circus       | 6:28:18 |   500 |      16672 | NED             |     13279 |
+|  1 |    02 | Clarke Simon          | EF Education First      | + 00    |   400 |        568 | AUS             |     13208 |
+|  2 |    03 | Fuglsang Jakob        | Astana Pro Team         | + 00    |   325 |        264 | DEN             |     13198 |
+|  3 |    04 | Alaphilippe Julian    | Deceuninck - Quick Step | + 00    |   275 |      12474 | FRA             |     13206 |
+|  4 |    05 | Schachmann Maximilian | Bora - Hansgrohe        | + 00    |   225 |      16643 | GER             |     13200 |
 
 **Rider Results:**
 ```python
@@ -39,13 +39,13 @@ For full documentation, see https://firstcyclingapi.readthedocs.io/en/latest/.
 >>> roglic.year_results(2020).results_df.head() # A pandas DataFrame of Roglic's 2020 results
 ```
 
-|    |   Date | Pos   |   GC | Race                 | CAT   |   UCI | Unnamed: 7   |   Race_ID | Race_Country   |
-|---:|-------:|:------|-----:|:---------------------|:------|------:|:-------------|----------:|:---------------|
-|  0 |   9.08 | 1     |  nan | Tour de l'Ain        | 2.1   |   125 | Show more    |        63 | FRA            |
-|  1 |  16.08 | DNF   |  nan | Criterium Dauphine   | 2.WT1 |   nan | Show more    |        15 | FRA            |
-|  2 |  28.06 | 2     |  nan | CN Slovenia ITT      | CN    |    30 | nan          |      2128 | SLO            |
-|  3 |  21.06 | 1     |  nan | CN Slovenia RR       | CN    |   100 | nan          |      2127 | SLO            |
-|  4 |   4.1  | 1     |  nan | Liege-Bastogne-Liege | 1.WT1 |   500 | Show more    |        11 | BEL            |
+|    |   Date |   Pos |   GC | Race_Country   | Race                  | CAT   |   UCI | Unnamed: 8   |   Race_ID |
+|---:|-------:|------:|-----:|:---------------|:----------------------|:------|------:|:-------------|----------:|
+|  0 |   8.11 |     1 |  nan | ESP            | Vuelta a España       | 2.UWT |   850 | Show more    |        23 |
+|  1 |   4.1  |     1 |  nan | BEL            | Liège-Bastogne-Liège  | 1.UWT |   500 | Show more    |        11 |
+|  2 |  20.09 |     2 |  nan | FRA            | Tour de France        | 2.UWT |   800 | Show more    |        17 |
+|  3 |  27.09 |     6 |  nan | UCI            | World Championship RR | WCRR  |   225 | Show more    |        26 |
+|  4 |   9.08 |     1 |  nan | FRA            | Tour de l'Ain         | 2.1   |   125 | Show more    |        63 |
 
 **Rankings Pages:**
 ```python
