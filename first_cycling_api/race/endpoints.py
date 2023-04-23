@@ -88,6 +88,8 @@ class RaceEditionResults(RaceEndpoint):
 		results_table = self.soup.find('table', {'class': 'sortTabell tablesorter'})
 		if not results_table:
 			results_table = self.soup.find('table', {'class': 'sortTabell2 tablesorter'})
+		if not results_table:
+			results_table = self.soup.find('table', {'class': 'tablesorter sortTabell'})		   
 		self.results_table = parse_table(results_table)
 
 		# Load all classification standings after stage
