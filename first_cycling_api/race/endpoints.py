@@ -83,18 +83,12 @@ class RaceEditionResults(RaceEndpoint):
 		super()._parse_soup()
 		self._get_results_table()
 		self._get_sidebar_information()
-
+        
 	def _get_results_table(self):
-		results_table = self.soup.find('table', {'class': 'sortTabell tablesorter'})
-		if not results_table:
-			results_table = self.soup.find('table', {'class': 'sortTabell2 tablesorter'})
-		if not results_table:
-			results_table = self.soup.find('table', {'class': 'tablesorter sortTabell'})		   
-		self.results_table = parse_table(results_table)
-
 		# Load all classification standings after stage
-		divs = self.soup.find_all('div', {'class': "tab-content dummy"})
+		divs = self.soup.find_all('div', {'class': "tab-content"}) #includes also tab-content results
 		self.standings = {div['id']: parse_table(div.table) for div in divs}
+		self.results_table = self.standings[divs[0]['id']] #first appearing is the result
 
 	def _get_sidebar_information(self): # TODO
 		return
