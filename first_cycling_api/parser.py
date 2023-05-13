@@ -99,9 +99,19 @@ def parse_table(table):
 
 	# Add information hidden in tags
 	for col, series in soup_df.items():
-        
-        
 		if col in ('Rider', 'Winner', 'Second', 'Third'):
+			if col =="Rider":
+			    out_df["Inv name"]=out_df["Rider"].str.lower()
+                #reverse order of name
+			    for ii in range(len(series)):
+			        t=[s.text for s in series[ii].find_all("span")]
+			        if len(t)>0:
+			            last_name=t[0]
+			            first_name=out_df["Rider"].values[ii][len(last_name)+1:]
+			            out_df["Rider"].values[ii]=first_name+" "+last_name
+			        else:
+			            print("no span found in: " +str(series[ii]))
+
 			out_df[col + '_ID'] = series.apply(lambda td: rider_link_to_id(td.a))
 			try:
 				out_df[col + '_Country'] = series.apply(lambda td: img_to_country_code(td.img))

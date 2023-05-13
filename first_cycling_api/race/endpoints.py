@@ -86,9 +86,22 @@ class RaceEditionResults(RaceEndpoint):
         
 	def _get_results_table(self):
 		# Load all classification standings after stage
-		divs = self.soup.find_all('div', {'class': "tab-content"}) #includes also tab-content results
-		self.standings = {div['id']: parse_table(div.table) for div in divs}
-		self.results_table = self.standings[divs[0]['id']] #first appearing is the result
+        # test if old race type or new race type:
+        
+		results_table = self.soup.find('table', {'class': 'sortTabell tablesorter'})
+		if not results_table:
+		    results_table = self.soup.find('table', {'class': 'sortTabell2 tablesorter'})
+            
+		if results_table: #old race type
+		    self.results_table = parse_table(results_table)
+    
+    		# Load all classification standings after stage
+		    divs = self.soup.find_all('div', {'class': "tab-content dummy"})
+		    self.standings = {div['id']: parse_table(div.table) for div in divs}
+		else: #new race type
+		    divs = self.soup.find_all('div', {'class': "tab-content"}) #includes also tab-content results
+		    self.standings = {div['id']: parse_table(div.table) for div in divs}
+		    self.results_table = self.standings[divs[0]['id']] #first appearing is the result
 
 	def _get_sidebar_information(self): # TODO
 		return

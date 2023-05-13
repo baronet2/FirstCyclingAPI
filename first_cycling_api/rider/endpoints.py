@@ -60,7 +60,7 @@ class RiderYearResults(RiderEndpoint):
 
 	def _get_year_details(self):
 		# Find table with details
-		details_table = self.soup.find('table', {'class': 'tablesorter notOddEven'})
+		details_table = self.soup.find('table', {'class': 'sortTabell tablesorter'})
 
 		spans = details_table.find_all('span')
 
