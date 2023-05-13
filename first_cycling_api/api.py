@@ -6,6 +6,7 @@ Provides tools to access the FirstCycling API.
 """
 
 from slumber import API
+import time
 
 class FirstCyclingAPI(API):
     """ Wrapper for FirstCycling API """
@@ -19,7 +20,13 @@ class FirstCyclingAPI(API):
         return {k: v for k, v in kwargs.items() if v}
     
     def _get_resource_response(self, resource, **kwargs):
-        return self._store['session'].get(resource.url(), params=self._fix_kwargs(**kwargs)).content
+        i=0
+        while i<10:
+            try:
+                return self._store['session'].get(resource.url(), params=self._fix_kwargs(**kwargs)).content
+            except:
+                time.sleep(1.0)
+                i+=1
 
     def get_rider_endpoint(self, rider_id, **kwargs):
         return self._get_resource_response(self['rider.php'], r=rider_id, **kwargs)
