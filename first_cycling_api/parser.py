@@ -4,7 +4,7 @@ Parser
 
 Provides useful functions to parse API responses.
 """
-
+import pandas as pd
 # Parsing dates ----
 
 def parse_date(date_text):
@@ -59,8 +59,6 @@ def img_to_profile(img):
 def parse_table(table):
 	""" Convert HTML table from bs4 to pandas DataFrame. Return None if no data. """
 	# TODO for rider results, format dates nicely with hidden column we are throwing away
-	import pandas as pd
-
 	# Load pandas DataFrame from raw text only
 	out_df = pd.read_html(str(table), decimal=',')[0]
 
@@ -95,7 +93,11 @@ def parse_table(table):
 			headers[i]='Rider'
 			break
 
-	soup_df = pd.DataFrame([tr.find_all('td') for tr in trs], columns=headers)
+	try:
+	    soup_df = pd.DataFrame([tr.find_all('td') for tr in trs], columns=headers)
+	except Exception as msg:
+	    print(msg)
+	    print("A cause of this failure can be that the race is not completed yet")
 
 	# Add information hidden in tags
 	for col, series in soup_df.items():
@@ -107,7 +109,16 @@ def parse_table(table):
 			        t=[s.text for s in series[ii].find_all("span")]
 			        if len(t)>0:
 			            last_name=t[0]
+			            while len(last_name)>0 and last_name[-1]==" ":
+			                last_name=last_name[:-1]
+                        
 			            first_name=out_df["Rider"].values[ii][len(last_name)+1:]
+                        
+			            if first_name.find("[*]")!=-1: #for disqualification
+			                first_name=first_name[0:first_name.find("[*]")]+first_name[first_name.find("[*]")+3:]
+			            while first_name.find("  ")!=-1:
+			                first_name=first_name.replace("  "," ")
+                            
 			            out_df["Rider"].values[ii]=first_name+" "+last_name
 			        else:
 			            print("no span found in: " +str(series[ii]))
@@ -139,3 +150,4 @@ def parse_table(table):
 	# TODO Remove Unnamed columns
 	
 	return out_df
+

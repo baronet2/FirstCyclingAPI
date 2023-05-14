@@ -17,7 +17,8 @@ U23_categories = ['1.2U', '2.2U', '1.NC', '2.NC']
 # Global enums ----
 from enum import Enum
 
-classifications = {'general': 1, 'youth': 2, 'points': 3, 'mountain': 4, 'sprint': 6}
+classifications = {'general': 1, 'youth': 2, 'points': 3, 'mountain': 4, 'sprint': 6, 'team': 8}
+classifications_inv = { 1:"gc",  2:'youth', 3:'point',  4:'mountain',  6:'sprint', 8:'team'} #as used by FC
 Classification = Enum('Classification', classifications)
 """
 Enum mapping classification names to numbers.

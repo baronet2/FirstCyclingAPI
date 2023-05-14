@@ -1,6 +1,8 @@
 from ..objects import FirstCyclingObject
-from .endpoints import RaceEndpoint, RaceVictoryTable, RaceStageVictories, RaceEditionResults
+from .endpoints import RaceEndpoint, RaceVictoryTable, RaceStageVictories, RaceEditionResults, RaceEditionStartlist
 from ..api import fc
+from ..constants import classifications_inv
+import numpy as np
 
 class Race(FirstCyclingObject):
 	"""
@@ -137,41 +139,34 @@ class RaceEdition(FirstCyclingObject):
 		RaceEditionResults
 		"""
 		zero_padded_stage_num = f'{stage_num:02}' if isinstance(stage_num, int) else None
-		self.results=self._get_endpoint(endpoint=RaceEditionResults, l=classification_num, e=zero_padded_stage_num)
-		print("Parsiong")
-		print(self.results.standings)
-		return self.results
-
-	def get_standings(self,classification_num=None, stage_num=None):
-		"""
-		Get race edition results for given classification or stage.
-
-		Parameters
-		----------
-		classification_num : int
-			Classification for which to collect information.
-			See utilities.Classifications for possible inputs.
-		stage_num : int
-			Stage number for which to collect results, if applicable.
-			Input 0 for prologue.
-
-		Returns
-		-------
-		RaceEditionResults
-		"""
-		if not hasattr(self, "results"):
-		    self.results(classification_num, stage_num)
-		return self.results.standings
-
-	#def ext_results(self, stage_num=None):
-		"""
-		Add startlist bib to the result
+		self.res=self._get_endpoint(endpoint=RaceEditionResults, l=classification_num, e=zero_padded_stage_num)
         
-		"""
-        
-		#res=self.results(stage_num)
-		#return self._get_endpoint(k=8,endpoint=RaceEditionExtResults,res=res.results_table)
+		if classification_num is None:
+		    return self.res     
+		elif len(self.res.standings)==0: #not a special classification or old style race 
+		    check=self._get_endpoint(endpoint=RaceEditionResults, e=zero_padded_stage_num) 
+            #check if not identical
+		    if ((not (classification_num==1 and stage_num==0)) and
+               ("Rider" in check.results_table) and
+               ("Rider" in self.res.results_table) and
+               (len(check.results_table["Rider"].values)==len(self.res.results_table["Rider"].values)) and
+               np.all(np.equal(check.results_table["Rider"].values,self.res.results_table["Rider"].values)) and 
+                ("Time" in self.res.results_table) and ("Time" in check.results_table) and 
+                (len(check.results_table["Time"].values)==len(self.res.results_table["Time"].values)) and
+               np.all(np.equal(check.results_table["Time"].values,self.res.results_table["Time"].values))):
+		            print("classification " + str(classifications_inv[classification_num])+" seems not to be available on first cycling, interrupted")
+		            return None
 
+		    return self.res          
+		else: #new style race, other classification are saved in standings
+		    if classification_num not in classifications_inv:
+		        raise ValueError("classification_num not supported")
+        
+		    if classifications_inv[classification_num] in self.res.standings:
+		        return self.res.standings[classifications_inv[classification_num]]
+		    else:
+		        print("classification " + str(classifications_inv[classification_num])+" not found")
+		        return None
 
 	def stage_profiles(self):
 		"""
@@ -191,7 +186,7 @@ class RaceEdition(FirstCyclingObject):
 		-------
 		RaceEndpoint
 		"""
-		return self._get_endpoint(k=8)
+		return self._get_endpoint(k=8,endpoint=RaceEditionStartlist)
 
 	def startlist_extended(self):
 		"""
@@ -202,3 +197,6 @@ class RaceEdition(FirstCyclingObject):
 		RaceEndpoint
 		"""
 		return self._get_endpoint(k=9)
+    
+
+        
