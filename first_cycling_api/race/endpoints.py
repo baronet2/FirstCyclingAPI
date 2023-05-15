@@ -42,6 +42,7 @@ class RaceVictoryTable(RaceEndpoint):
 	def _parse_soup(self):
 		super()._parse_soup()
 		self._get_victory_table()
+		
 
 	def _get_victory_table(self):
 		victory_table = self.soup.find('table', {'class': 'tablesorter'})
@@ -85,9 +86,9 @@ class RaceEditionResults(RaceEndpoint):
 		self._get_sidebar_information()
 
 	def _get_results_table(self):
-		results_table = self.soup.find('table', {'class': 'sortTabell tablesorter'})
+		results_table = self.soup.find('table', {'class': 'sortTabell'})
 		if not results_table:
-			results_table = self.soup.find('table', {'class': 'sortTabell2 tablesorter'})
+			results_table = self.soup.find('table', {'class': 'sortTabell2'})
 		self.results_table = parse_table(results_table)
 
 		# Load all classification standings after stage

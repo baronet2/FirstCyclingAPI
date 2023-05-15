@@ -85,7 +85,7 @@ def parse_table(table):
 	soup_df = pd.DataFrame([tr.find_all('td') for tr in trs], columns=headers)
 
 	# Add information hidden in tags
-	for col, series in soup_df.iteritems():
+	for col, series in soup_df.items():
 		if col in ('Rider', 'Winner', 'Second', 'Third'):
 			out_df[col + '_ID'] = series.apply(lambda td: rider_link_to_id(td.a))
 			try:
