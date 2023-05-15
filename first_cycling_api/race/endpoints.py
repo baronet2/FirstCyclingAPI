@@ -42,6 +42,7 @@ class RaceVictoryTable(RaceEndpoint):
 	def _parse_soup(self):
 		super()._parse_soup()
 		self._get_victory_table()
+		
 
 	def _get_victory_table(self):
 		victory_table = self.soup.find('table', {'class': 'tablesorter'})
