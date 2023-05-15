@@ -8,7 +8,7 @@ my_vcr = vcr.VCR(cassette_library_dir='tests/vcr_cassettes/ranking', path_transf
 def test_2020_UCI_ranking():
 	ranking = Ranking(h=1, rank=1, y=2020, page=2)
 	assert len(ranking.table) == 100 # 100 rows in result
-	assert ranking.table['Rider'].iloc[0] == 'Egan Bernal'
+	assert ranking.table['Rider'].iloc[0] == 'Bernal Egan'
 
 @my_vcr.use_cassette()
 def test_2016_french_race_ranking():
