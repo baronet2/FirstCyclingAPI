@@ -42,6 +42,7 @@ class RaceVictoryTable(RaceEndpoint):
 	def _parse_soup(self):
 		super()._parse_soup()
 		self._get_victory_table()
+		
 
 	def _get_victory_table(self):
 		victory_table = self.soup.find('table', {'class': 'tablesorter'})
@@ -66,7 +67,10 @@ class RaceStageVictories(RaceEndpoint):
 		victory_table = self.soup.find('table', {'class': 'test tablesorter'}) # TODO test
 		self.table = parse_table(victory_table)
 
-
+class Standing():
+    def __init__(self, results_table):
+        self.results_table=results_table
+        
 class RaceEditionResults(RaceEndpoint):
 	"""
 	Race edition results response. Extends RaceEndpoint.
@@ -87,14 +91,20 @@ class RaceEditionResults(RaceEndpoint):
 	def _get_results_table(self):
 		results_table = self.soup.find('table', {'class': 'sortTabell tablesorter'})
 		if not results_table:
-			results_table = self.soup.find('table', {'class': 'sortTabell2 tablesorter'})
-		if not results_table:
-			results_table = self.soup.find('table', {'class': 'tablesorter sortTabell'})		   
-		self.results_table = parse_table(results_table)
+		    results_table = self.soup.find('table', {'class': 'sortTabell2 tablesorter'})
+            
+		if results_table: #old race type
+		    self.results_table = parse_table(results_table)
+    
+    		# Load all classification standings after stage
+		    divs = self.soup.find_all('div', {'class': "tab-content dummy"})
+		    self.standings = {div['id']: Standing(parse_table(div.table)) for div in divs} #may not work and require the use of l=classification num  
 
-		# Load all classification standings after stage
-		divs = self.soup.find_all('div', {'class': "tab-content dummy"})
-		self.standings = {div['id']: parse_table(div.table) for div in divs}
+		else: #new race type
+		    divs = self.soup.find_all('div', {'class': "tab-content"}) #includes also tab-content results
+		    self.standings= {div['id']: Standing(parse_table(div.table)) for div in divs}
+            
+		    self.results_table = self.standings[divs[0]['id']].results_table #first appearing is the result
 
 	def _get_sidebar_information(self): # TODO
 		return
