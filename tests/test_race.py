@@ -27,3 +27,29 @@ def test_2023_amstel():
 	results_2023 = amstel_2023.results()
 	assert len(results_2023.results_table) == 175
 	assert results_2023.results_table['Rider'].iloc[0] == 'Pogacar Tadej'
+
+
+@my_vcr.use_cassette()
+def test_2022_basque():
+    basque = Race(6)
+    basque_2022 = basque.edition(year = 2022)
+    results_2022 = basque_2022.results()
+    
+    assert len(results_2022.results_table) == 156
+    assert results_2022.results_table['Rider'].iloc[0] == 'Martinez Daniel'
+    
+    results_2022_yc = basque_2022.results(classification_num = 2)
+    assert len(results_2022_yc.results_table) == 11
+    assert results_2022_yc.results_table['Rider'].iloc[0] == 'Evenepoel Remco'
+
+
+@my_vcr.use_cassette()
+def test_2023_basque():
+    basque = Race(6)
+    basque_2023 = basque.edition(year = 2023)
+    results_2023 = basque_2023.results()
+    
+    assert len(results_2023.results_table) == 161
+    assert results_2023.results_table['Rider'].iloc[0] == 'Vingegaard Jonas'
+    assert len(results_2023.standings['youth']) == 26
+    assert results_2023.standings['youth']['Rider'].iloc[0] == 'McNulty Brandon'
