@@ -17,17 +17,17 @@ U23_categories = ['1.2U', '2.2U', '1.NC', '2.NC']
 # Global enums ----
 from enum import Enum
 
-classifications = {'general': 1, 'youth': 2, 'points': 3, 'mountain': 4, 'sprint': 6}
+classifications = {'gc': 1, 'youth': 2, 'points': 3, 'mountain': 4, 'sprint': 6}
 Classification = Enum('Classification', classifications)
 """
 Enum mapping classification names to numbers.
 
 Examples
 ========
->>> Classification.general.value
+>>> Classification.gc.value
 1
 >>> Classification(1).name
-'general'
+'gc'
 """
 
 profile_icon_map = {'Bakketempo.png': 'Mountain ITT',
