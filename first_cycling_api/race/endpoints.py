@@ -48,7 +48,10 @@ class RaceVictoryTable(RaceEndpoint):
 		victory_table = self.soup.find('table', {'class': 'tablesorter'})
 		self.table = parse_table(victory_table)
 
-
+class Standing():
+    def __init__(self, results_table):
+        self.results_table=results_table
+        
 class RaceStageVictories(RaceEndpoint):
 	"""
 	Race stage victory table response. Extends RaceEndpoint.
@@ -86,14 +89,22 @@ class RaceEditionResults(RaceEndpoint):
 		self._get_sidebar_information()
 
 	def _get_results_table(self):
-		results_table = self.soup.find('table', {'class': 'sortTabell'})
+		results_table = self.soup.find('table', {'class': 'sortTabell tablesorter'})
 		if not results_table:
-			results_table = self.soup.find('table', {'class': 'sortTabell2'})
-		self.results_table = parse_table(results_table)
+		    results_table = self.soup.find('table', {'class': 'sortTabell2 tablesorter'})
+            
+		if results_table: #old race type
+		    self.results_table = parse_table(results_table)
+    
+    		# Load all classification standings after stage
+		    divs = self.soup.find_all('div', {'class': "tab-content dummy"})
+		    self.standings = {div['id']: Standing(parse_table(div.table)) for div in divs} #may not work and require the use of l=classification num  
 
-		# Load all classification standings after stage
-		divs = self.soup.find_all('div', {'class': "tab-content dummy"})
-		self.standings = {div['id']: parse_table(div.table) for div in divs}
+		else: #new race type
+		    divs = self.soup.find_all('div', {'class': "tab-content"}) #includes also tab-content results
+		    self.standings= {div['id']: Standing(parse_table(div.table)) for div in divs}
+            
+		    self.results_table = self.standings[divs[0]['id']].results_table #first appearing is the result 
 
 	def _get_sidebar_information(self): # TODO
 		return
