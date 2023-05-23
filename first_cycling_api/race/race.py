@@ -1,6 +1,7 @@
 from ..objects import FirstCyclingObject
 from .endpoints import RaceEndpoint, RaceVictoryTable, RaceStageVictories, RaceEditionResults
 from ..api import fc
+from ..constants import Classification
 
 class Race(FirstCyclingObject):
 	"""
@@ -137,6 +138,8 @@ class RaceEdition(FirstCyclingObject):
 		RaceEditionResults
 		"""
 		zero_padded_stage_num = f'{stage_num:02}' if isinstance(stage_num, int) else None
+		if self.year >= 2023 and classification_num is not None and classification_num != Classification['gc'].value:
+			print("Warning: results_table might show GC results. Check the standings attribute for other classifications.")
 		return self._get_endpoint(endpoint=RaceEditionResults, l=classification_num, e=zero_padded_stage_num)
 
 

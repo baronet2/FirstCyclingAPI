@@ -75,8 +75,8 @@ def parse_table(table):
 			out_df[col] = out_df[col].astype(str).str.replace('.', '', regex=False).astype(int)
 
 	# Parse soup to add information hidden in tags/links
-	headers = [th.text for th in table.tr.find_all('th')]
-	trs = table.find_all('tr')[1:]
+	headers = [th.text for th in table.find_all('th')]
+	trs = [tr for tr in table.find_all('tr') if tr.th is None]
 
 	if 'Race.1' in out_df:
 		out_df = out_df.rename(columns={'Race': 'Race_Country', 'Race.1': 'Race'})

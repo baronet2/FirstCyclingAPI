@@ -92,7 +92,7 @@ class RaceEditionResults(RaceEndpoint):
 		self.results_table = parse_table(results_table)
 
 		# Load all classification standings after stage
-		divs = self.soup.find_all('div', {'class': "tab-content dummy"})
+		divs = self.soup.find_all('div', {'class': "tab-content"})
 		self.standings = {div['id']: parse_table(div.table) for div in divs}
 
 	def _get_sidebar_information(self): # TODO
