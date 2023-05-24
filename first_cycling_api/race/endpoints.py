@@ -91,6 +91,7 @@ class RaceEditionResults(RaceEndpoint):
 	def _get_results_table(self):
 		results_table = self.soup.find('table', {'class': 'sortTabell tablesorter'})
 		if not results_table:
+
 		    results_table = self.soup.find('table', {'class': 'sortTabell2 tablesorter'})
             
 		if results_table: #old race type
@@ -105,6 +106,7 @@ class RaceEditionResults(RaceEndpoint):
 		    self.standings= {div['id']: Standing(parse_table(div.table)) for div in divs}
             
 		    self.results_table = self.standings[divs[0]['id']].results_table #first appearing is the result 
+
 
 	def _get_sidebar_information(self): # TODO
 		return

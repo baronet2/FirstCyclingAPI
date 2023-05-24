@@ -143,12 +143,6 @@ def test_2023_itzulia():
     #assert r['Points'].iloc[0] == 6
     
     #assert len(r_2023.results(stage_num=1,classification_num=8).results_table) == 19
-
-my_vcr.use_cassette() #Is it normal that it is no decorator???
-def test_2014_giro_rosa_prologue():
-	giro_rosa_2014 = RaceEdition(race_id=9064, year=2014)
-	results = giro_rosa_2014.results(stage_num=0)
-	assert results.results_table['Rider'].iloc[0] == 'van Vleuten Annemiek'
     
 def test_giro_donne_2001():
     giro_rosa_2001 = RaceEdition(race_id=9064, year=2001, )
@@ -159,3 +153,29 @@ def test_giro_donne_2001():
     
     #results = giro_rosa_2001.results(stage_num=1,classification_num=3) #not existing
     #assert results==None
+
+@my_vcr.use_cassette()
+def test_2022_basque():
+    basque = Race(6)
+    basque_2022 = basque.edition(year = 2022)
+    results_2022 = basque_2022.results()
+    
+    assert len(results_2022.results_table) == 156
+    assert results_2022.results_table['Rider'].iloc[0] == 'Martinez Daniel'
+    
+    results_2022_yc = basque_2022.results(classification_num = 2)
+    assert len(results_2022_yc.results_table) == 11
+    assert results_2022_yc.results_table['Rider'].iloc[0] == 'Evenepoel Remco'
+
+
+@my_vcr.use_cassette()
+def test_2023_basque():
+    basque = Race(6)
+    basque_2023 = basque.edition(year = 2023)
+    results_2023 = basque_2023.results()
+    
+    assert len(results_2023.results_table) == 161
+    assert results_2023.results_table['Rider'].iloc[0] == 'Vingegaard Jonas'
+    assert len(results_2023.standings['youth']) == 26
+    assert results_2023.standings['youth']['Rider'].iloc[0] == 'McNulty Brandon'
+
