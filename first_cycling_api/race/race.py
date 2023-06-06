@@ -160,7 +160,7 @@ class RaceEdition(FirstCyclingObject):
 		    return self.res          
 		else: #new style race, other classification are saved in standings
 		    if classification_num not in classifications_inv:
-		        raise ValueError("classification_num not supported")
+		        raise ValueError("classification_num " + str(classification_num) + " not supported")
         
 		    if classifications_inv[classification_num] in self.res.standings:
 		        return self.res.standings[classifications_inv[classification_num]]

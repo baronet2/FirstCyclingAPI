@@ -57,97 +57,102 @@ def img_to_profile(img):
 # Parsing tables ----
 
 def parse_table(table):
-	""" Convert HTML table from bs4 to pandas DataFrame. Return None if no data. """
-	# TODO for rider results, format dates nicely with hidden column we are throwing away
-	# Load pandas DataFrame from raw text only
-	out_df = pd.read_html(str(table), decimal=',')[0]
-
-	if out_df.iat[0, 0] == 'No data': # No data
-		return None
-
-	# Convert decimal points to thousands separator
-	# NOTE: Cannot use thousands='.' in pd.read_html because will ruin other columns (e.g. CAT for races)
-	thousands_cols = ['Points']
-	for col in thousands_cols:
-		if col in out_df:
-			out_df[col] = out_df[col].astype(str).str.replace('.', '', regex=False).astype(int)
-
-	# Parse soup to add information hidden in tags/links
-	if len([th.text for th in table.tr.find_all('th')])==0: #bug with youth, as a <tr> is missing
-		trs = table.find_all('tr')[0:]
-	else:
-		trs = table.find_all('tr')[1:]
-    
-	headers = [th.text for th in table.thead.find_all('th')]
-
-	if 'Race.1' in out_df:
-		out_df = out_df.rename(columns={'Race': 'Race_Country', 'Race.1': 'Race'})
-		headers.insert(headers.index('Race'), 'Race_Country')
-    
-	for col in out_df.columns: #problems with \nRider\n
-		if "Rider" in col:
-			out_df = out_df.rename(columns={col: 'Rider'})
-			break
-	for i, col in enumerate(headers): #problems with \nRider\n
-		if "Rider" in col:
-			headers[i]='Rider'
-			break
-
-	try:
-	    soup_df = pd.DataFrame([tr.find_all('td') for tr in trs], columns=headers)
-	except Exception as msg:
-	    print(msg)
-	    print("A cause of this failure can be that the race is not completed yet")
-
-	# Add information hidden in tags
-	for col, series in soup_df.items():
-		if col in ('Rider', 'Winner', 'Second', 'Third'):
-			if col =="Rider":
-			    out_df["Inv name"]=out_df["Rider"].str.lower()
-                #reverse order of name
-			    for ii in range(len(series)):
-			        t=[s.text for s in series[ii].find_all("span")]
-			        if len(t)>0:
-			            last_name=t[0]
-			            while len(last_name)>0 and last_name[-1]==" ":
-			                last_name=last_name[:-1]
-                        
-			            first_name=out_df["Rider"].values[ii][len(last_name)+1:]
-                        
-			            if first_name.find("[*]")!=-1: #for disqualification
-			                first_name=first_name[0:first_name.find("[*]")]+first_name[first_name.find("[*]")+3:]
-			            while first_name.find("  ")!=-1:
-			                first_name=first_name.replace("  "," ")
-                            
-			            out_df["Rider"].values[ii]=first_name+" "+last_name
-			        else:
-			            print("no span found in: " +str(series[ii]))
-
-			out_df[col + '_ID'] = series.apply(lambda td: rider_link_to_id(td.a))
-			try:
-				out_df[col + '_Country'] = series.apply(lambda td: img_to_country_code(td.img))
-			except TypeError:
-				pass
-
-		elif col == 'Team':
-			out_df['Team_ID'] = series.apply(lambda td: team_link_to_id(td.a) if td.a else None)
-			out_df['Team_Country'] = series.apply(lambda td: img_to_country_code(td.img) if td.img else None)
-
-		elif col == 'Race':
-			out_df['Race_ID'] = series.apply(lambda td: get_url_parameters(td.a['href'])['r'] if td.a else None)
-			
-		elif col == 'Race_Country':
-			out_df['Race_Country'] = series.apply(lambda td: img_to_country_code(td.img) if td.img else None)
-
-		elif col == '':
-			try:
-				out_df['Icon'] = series.apply(lambda td: get_img_name(td.img) if td.img else None)
-			except AttributeError:
-				pass
-
-	out_df = out_df.replace({'-': None}).dropna(how='all', axis=1)
-
-	# TODO Remove Unnamed columns
-	
-	return out_df
+   	""" Convert HTML table from bs4 to pandas DataFrame. Return None if no data. """
+   	# TODO for rider results, format dates nicely with hidden column we are throwing away
+   	# Load pandas DataFrame from raw text only
+   	out_df = pd.read_html(str(table), decimal=',')[0]
+   
+   	if out_df.iat[0, 0] == 'No data': # No data
+   		return None
+   
+   	# Convert decimal points to thousands separator
+   	# NOTE: Cannot use thousands='.' in pd.read_html because will ruin other columns (e.g. CAT for races)
+   	thousands_cols = ['Points']
+   	for col in thousands_cols:
+   		if col in out_df:
+   			out_df[col] = out_df[col].astype(str).str.replace('.', '', regex=False).astype(int)
+   
+   	# Parse soup to add information hidden in tags/links
+   	if len([th.text for th in table.tr.find_all('th')])==0: #bug with youth, as a <tr> is missing
+   		trs = table.find_all('tr')[0:]
+   	else:
+   		trs = table.find_all('tr')[1:]
+       
+   	headers = [th.text for th in table.thead.find_all('th')]
+   
+   	if 'Race.1' in out_df:
+   		out_df = out_df.rename(columns={'Race': 'Race_Country', 'Race.1': 'Race'})
+   		headers.insert(headers.index('Race'), 'Race_Country')
+       
+   	for col in out_df.columns: #problems with \nRider\n
+   		if "Rider" in col:
+   			out_df = out_df.rename(columns={col: 'Rider'})
+   			break
+   	for i, col in enumerate(headers): #problems with \nRider\n
+   		if "Rider" in col:
+   			headers[i]='Rider'
+   			break
+   
+   	try:
+   	    soup_df = pd.DataFrame([tr.find_all('td') for tr in trs], columns=headers)
+   	except Exception as msg:
+   	    print(msg)
+   	    print("A cause can be that the race is not completed yet")
+   	    return None
+   
+   
+   	# Add information hidden in tags
+   	for col, series in soup_df.items():
+   		if col in ('Rider', 'Winner', 'Second', 'Third'):
+   			if col =="Rider":
+   			    out_df["Rider"]=out_df["Rider"].str.replace("[*]","",regex=False)
+   			    out_df["Rider"]=out_df["Rider"].str.replace("*","",regex=False)
+   			    out_df["Rider"]=out_df["Rider"].str.replace("  "," " ,regex=False)
+   			    out_df["Inv name"]=out_df["Rider"].str.lower()
+                   #reverse order of name
+   			    for ii in range(len(series)):
+   			        t=[s.text for s in series[ii].find_all("span")]
+   			        if len(t)>0:
+   			            last_name=t[0]
+   			            while len(last_name)>0 and last_name[-1]==" ":
+   			                last_name=last_name[:-1]
+                           
+   			            first_name=out_df["Rider"].values[ii][len(last_name)+1:]
+                           
+   			            #if first_name.find("[*]")!=-1: #for disqualification
+   			            #    first_name=first_name[0:first_name.find("[*]")]+first_name[first_name.find("[*]")+3:]
+   			            #while first_name.find("  ")!=-1:
+   			            #    first_name=first_name.replace("  "," ")
+                               
+   			            out_df["Rider"].values[ii]=first_name+" "+last_name
+   			        else:
+   			            print("no span found in: " +str(series[ii]))
+   
+   			out_df[col + '_ID'] = series.apply(lambda td: rider_link_to_id(td.a))
+   			try:
+   				out_df[col + '_Country'] = series.apply(lambda td: img_to_country_code(td.img))
+   			except TypeError:
+   				pass
+   
+   		elif col == 'Team':
+   			out_df['Team_ID'] = series.apply(lambda td: team_link_to_id(td.a) if td.a else None)
+   			out_df['Team_Country'] = series.apply(lambda td: img_to_country_code(td.img) if td.img else None)
+   
+   		elif col == 'Race':
+   			out_df['Race_ID'] = series.apply(lambda td: get_url_parameters(td.a['href'])['r'] if td.a else None)
+   			
+   		elif col == 'Race_Country':
+   			out_df['Race_Country'] = series.apply(lambda td: img_to_country_code(td.img) if td.img else None)
+   
+   		elif col == '':
+   			try:
+   				out_df['Icon'] = series.apply(lambda td: get_img_name(td.img) if td.img else None)
+   			except AttributeError:
+   				pass
+   
+   	out_df = out_df.replace({'-': None}).dropna(how='all', axis=1)
+   
+   	# TODO Remove Unnamed columns
+   	
+   	return out_df
 

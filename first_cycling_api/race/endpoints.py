@@ -127,6 +127,11 @@ class RaceEditionStartlist(RaceEndpoint):
            sub_df=pd.read_html(str(t), decimal=',')[0]
            sub_df.columns=["BIB","Inv name"]
            sub_df["Inv name"]=sub_df["Inv name"].str.lower()
+           sub_df["Inv name"]=sub_df["Inv name"].str.replace("[*]","",regex=False)
+           sub_df["Inv name"]=sub_df["Inv name"].str.replace(" *","",regex=False)
+           sub_df["Inv name"]=sub_df["Inv name"].str.replace("*","",regex=False)
+           sub_df["Inv name"]=sub_df["Inv name"].str.replace("  "," " ,regex=False)
+
            arr.append(sub_df)
        
         bib_df =pd.concat(arr)
