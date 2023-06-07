@@ -25,10 +25,10 @@ Enum mapping classification names to numbers.
 
 Examples
 ========
->>> Classification.general.value
+>>> Classification.gc.value
 1
 >>> Classification(1).name
-'general'
+'gc'
 """
 
 profile_icon_map = {'Bakketempo.png': 'Mountain ITT',

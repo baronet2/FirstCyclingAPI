@@ -38,6 +38,7 @@ class RiderEndpoint(ParsedEndpoint):
 		self.header_details['twitter_handle'] = link_to_twitter_handle(self.soup.find('p', {'class': 'left'}).a) if self.soup.find('p', {'class': 'left'}) and self.soup.find('p', {'class': 'left'}).a else None
 	
 	def _get_sidebar_details(self):
+		# TODO Load details from sidebar
 		self.sidebar_details = {}
 
 

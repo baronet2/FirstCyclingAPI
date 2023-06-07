@@ -4,6 +4,7 @@ from ..api import fc
 from ..constants import classifications_inv
 import numpy as np
 
+
 class Race(FirstCyclingObject):
 	"""
 	Wrapper to access endpoints associated with races.
@@ -197,6 +198,3 @@ class RaceEdition(FirstCyclingObject):
 		RaceEndpoint
 		"""
 		return self._get_endpoint(k=9)
-    
-
-        

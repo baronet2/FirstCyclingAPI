@@ -41,8 +41,6 @@ class ParsedEndpoint(Endpoint):
 	def _parse_result(self):
 		self.soup = bs4.BeautifulSoup(self.response, 'html.parser')
 		self._parse_soup()
-		del self.soup
-
 	def _parse_soup(self):
 		return
 
