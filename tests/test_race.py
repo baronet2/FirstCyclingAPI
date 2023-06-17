@@ -176,6 +176,6 @@ def test_2023_basque():
     
     assert len(results_2023.results_table) == 161
     assert results_2023.results_table['Rider'].iloc[0] == 'Vingegaard Jonas'
-    assert len(results_2023.standings['youth']) == 26
-    assert results_2023.standings['youth']['Rider'].iloc[0] == 'McNulty Brandon'
+    assert len(results_2023.standings['youth'].results_table) == 26
+    assert results_2023.standings['youth'].results_table['Rider'].iloc[0] == 'McNulty Brandon'
 
