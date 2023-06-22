@@ -1,5 +1,5 @@
 from ..objects import FirstCyclingObject
-from .endpoints import RaceEndpoint, RaceVictoryTable, RaceStageVictories, RaceEditionResults
+from .endpoints import RaceEndpoint, RaceVictoryTable, RaceStageVictories, RaceEditionResults, RaceEditionStartlist
 from ..api import fc
 from ..constants import Classification
 
@@ -161,7 +161,7 @@ class RaceEdition(FirstCyclingObject):
 		-------
 		RaceEndpoint
 		"""
-		return self._get_endpoint(k=8)
+		return self._get_endpoint(k=8,endpoint=RaceEditionStartlist)
 
 	def startlist_extended(self):
 		"""
