@@ -82,12 +82,27 @@ def parse_table(table):
 	if 'Race.1' in out_df:
 		out_df = out_df.rename(columns={'Race': 'Race_Country', 'Race.1': 'Race'})
 		headers.insert(headers.index('Race'), 'Race_Country')
-
+        
+	for col in out_df.columns: #problems with \nRider\n
+   		if "Rider" in col:
+   			out_df = out_df.rename(columns={col: 'Rider'})
+   			break
+	for i, col in enumerate(headers): #problems with \nRider\n
+   		if "Rider" in col:
+   			headers[i]='Rider'
+   			break
+           
 	soup_df = pd.DataFrame([tr.find_all('td') for tr in trs], columns=headers)
 
 	# Add information hidden in tags
 	for col, series in soup_df.items():
 		if col in ('Rider', 'Winner', 'Second', 'Third'):
+			if col =="Rider":
+				out_df["Rider"]=out_df["Rider"].str.replace("[*]","",regex=False)
+				out_df["Rider"]=out_df["Rider"].str.replace("*","",regex=False)
+				out_df["Rider"]=out_df["Rider"].str.replace("  "," " ,regex=False)
+				out_df["Inv name"]=out_df["Rider"].str.lower()
+            
 			out_df[col + '_ID'] = series.apply(lambda td: rider_link_to_id(td.a))
 			try:
 				out_df[col + '_Country'] = series.apply(lambda td: img_to_country_code(td.img))

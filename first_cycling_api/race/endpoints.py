@@ -1,6 +1,6 @@
 from ..endpoints import ParsedEndpoint
 from ..parser import parse_table
-
+import pandas as pd
 
 class RaceEndpoint(ParsedEndpoint):
 	"""
@@ -110,3 +110,27 @@ class RaceEditionResults(RaceEndpoint):
 
 	def _get_sidebar_information(self): # TODO
 		return
+    
+class RaceEditionStartlist(RaceEndpoint): 
+    def _parse_soup(self):
+        super()._parse_soup()
+        self._get_results_table()
+        
+    def _get_results_table(self):    
+        tables = self.soup.find_all('table', {'class': 'tablesorter'})
+        
+        arr=[]
+        
+        for t in tables:
+           sub_df=pd.read_html(str(t), decimal=',')[0]
+           sub_df.columns=["BIB","Inv name"]
+           sub_df["Inv name"]=sub_df["Inv name"].str.lower()
+           sub_df["Inv name"]=sub_df["Inv name"].str.replace("[*]","",regex=False)
+           sub_df["Inv name"]=sub_df["Inv name"].str.replace(" *","",regex=False)
+           sub_df["Inv name"]=sub_df["Inv name"].str.replace("*","",regex=False)
+           sub_df["Inv name"]=sub_df["Inv name"].str.replace("  "," " ,regex=False)
+
+           arr.append(sub_df)
+       
+        bib_df =pd.concat(arr)
+        self.bib_df = bib_df.set_index(bib_df["Inv name"])
